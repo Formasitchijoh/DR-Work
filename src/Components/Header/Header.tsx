@@ -25,7 +25,7 @@ const Header = () => {
             </Link>
             <Link to="/login" className={linkHome}>Login Page</Link>
             {Boolean(!user) && (
-              <Link to="/auth" className={linkSignIn}>
+              <Link to="/googleauth" className={linkSignIn}>
                 Sign in
               </Link>
             )}

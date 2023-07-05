@@ -2,29 +2,3 @@
 @tailwind components;
 @tailwind utilities;
 
-
-@layer components {
-    .main-container{
-      @apply w-screen h-screen flex flex-col items-center justify-center overflow-hidden;
-    }
-    .header{
-        @apply w-full flex justify-center  gap-16 m-auto items-center bg-black text-white
-    }
-    .logo{
-        @apply w-10 h-15
-    }
-    .title{
-        @apply text-2xl font-sans font-normal 
-    }
-    .welcome-container{
-        @apply w-full  bg-red-300 flex flex-col justify-center items-center m-auto mt-8
-    }
-    .welcome-message{
-        @apply font-sans text-2xl text-gray-800 text-bold
-    }
-    .create-text{
-        @apply text-xl font-sans text-gray-900 translate-x-0
-    }
-
-  
-}

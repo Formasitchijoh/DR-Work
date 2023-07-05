@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom";
 
 import { authClasses } from "./authClasses";
 import { AuthForm, authFormSchema } from "../../Models/Form";
-import { auth, db } from "../../firebase";
+import { fireauth, firedb } from "../../firebase";
 import { useAppDispatch, useAppSelector } from "../../hooks/storeHook";
 import { login } from "../../Components/authSlice";
 import ResetPassword from "../../Components/ResetPassword/ResetPassword";
@@ -41,21 +41,12 @@ const Auth = () => {
     }
   }, [user, navigate]);
 
-  const {
-    container,
-    form,
-    button,
-    input,
-    text,
-    link,
-    hr,
-    forgotPasswordButton,
-  } = authClasses;
+  const {container,form,button,input,text,link,hr,forgotPasswordButton} = authClasses;
 
   const handlePasswordReset = async () => {
     if (!resetPasswordEmail.length) return;
     try {
-      await sendPasswordResetEmail(auth, resetPasswordEmail);
+      await sendPasswordResetEmail(fireauth, resetPasswordEmail);
       setResetPasswordSuccess(
         "Password reset email sent. Please check your inbox."
       );
@@ -69,7 +60,7 @@ const Auth = () => {
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
     try {
-      const { user } = await signInWithPopup(auth, provider);
+      const { user } = await signInWithPopup(fireauth, provider);
       if (user && user.email)
         dispatch(
           login({
@@ -90,12 +81,12 @@ const Auth = () => {
     if (authType === "sign-up") {
       try {
         const { user } = await createUserWithEmailAndPassword(
-          auth,
+          fireauth,
           email,
           password
         );
 
-        await setDoc(doc(db, "users", user.uid), { email });
+        await setDoc(doc(firedb, "users", user.uid), { email });
         setLoading(false);
 
         if (user && user.email)
@@ -112,7 +103,7 @@ const Auth = () => {
         setErrorMessage(errorCode);
       }
     } else {
-      const { user } = await signInWithEmailAndPassword(auth, email, password);
+      const { user } = await signInWithEmailAndPassword(fireauth, email, password);
       setLoading(false);
       if (user && user.email)
         dispatch(
@@ -131,13 +122,7 @@ const Auth = () => {
     );
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<AuthForm>({
-    resolver: yupResolver(authFormSchema),
-  });
+  const { register, handleSubmit, formState: { errors },} = useForm<AuthForm>({ resolver: yupResolver(authFormSchema),});
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { sendPasswordResetEmail, signOut } from "firebase/auth";
-import { auth } from "../../firebase";
+import { fireauth } from "../../firebase";
 
 import Header from "../../Components/Header/Header";
 import ProfileCard from "../../Components/ProfileCard/ProfileCard"
@@ -24,14 +24,14 @@ const Profile = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await signOut(auth);
+    await signOut(fireauth);
     dispatch(logout());
   };
 
   const handlePasswordReset = async () => {
     if (!resetPasswordEmail.length) return;
     try {
-      await sendPasswordResetEmail(auth, resetPasswordEmail);
+      await sendPasswordResetEmail(fireauth, resetPasswordEmail);
       setResetPasswordSuccess(
         "Password reset email sent. Please check your inbox."
       );
