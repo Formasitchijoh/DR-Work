@@ -1,14 +1,16 @@
 import { configureStore, createSlice} from '@reduxjs/toolkit';
 import { useReducer } from 'react';
-
+import authSlice from './Components/authSlice';
 
 
 export const store = configureStore({
-    reducer:{},
+    reducer:{
+        auth:authSlice
+    },
 });
 
 export type RootState = ReturnType<typeof store.getState>;
-export type AddDispatch = typeof store.dispatch;
+export type AppDispatch = typeof store.dispatch;
 
 
 //The redux store is similar to React context and react useReducerTh
