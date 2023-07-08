@@ -2,3 +2,91 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+    .main {
+        @apply max-w-sm xl:w-[100vw] m-auto  h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
+    }
+
+    .header {
+        @apply w-full h-11 flex justify-center items-center gap-20 bg-black
+    }
+    .logog{
+        @apply w-30 h-full gap-16
+    }
+    .logo-img{
+        @apply  w-full  max-h-full
+    }
+    .header-text{
+        @apply text-2xl from-neutral-900 text-white
+    }
+    .welcome-main{
+        @apply flex flex-col justify-center items-center px-10 m-auto mt-20  gap-2 
+}
+.welcome-header{
+    @apply text-2xl font-sans text-gray-800 font-bold
+}
+.welcome-msg{
+    @apply text-lg mt-3 font-sans text-gray-900 
+}
+
+.signIn-btn{
+    @apply flex-col w-full justify-center items-center mt-20 m-auto
+}
+
+.getting-started{
+    @apply flex justify-center items-center 
+}
+.getting-started-txt{
+    @apply text-lg font-semibold text-gray-700
+}
+.getting-hr{
+    @apply w-full h-0.5  bg-gray-500 font-sans
+}
+
+.facebook-main{
+    @apply mx-5 my-3 bg-black text-white hover:bg-gray-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
+}
+.footer{
+    @apply fixed flex justify-around bottom-0 gap-20
+}
+.dr-tech{
+    @apply text-lg text-gray-900 font-bold ml-2
+}
+.privacy{
+    @apply text-lg text-gray-500 
+}
+
+.success-modal{
+    @apply  absolute inset-0  bg-purple-50  m-auto rounded-lg p-6 max-h-[40vh]  max-w-[50vh] ml-5 xl:inset-x-96 xl:ml-40 xl:mr-5
+}
+.user-main{
+    @apply border-4 border-gray-400  rounded-full items-center justify-center h-[15vh] w-[30vw] ml-20 xl:h-[15vh] xl:w-[15vh]
+}
+.photo{
+    @apply w-full h-full rounded-full
+}
+.user-name{
+    @apply text-2xl font-sans mb-2 ml-7
+}
+.success{
+    @apply text-gray-900 
+}
+}
+
+/* 
+.success-modal-main {
+    @apply fixed max-w-sm xl:w-[100vw] xl:h-[50vh] bg-red-500 h-[10vh] mt-28 mx-auto z-50 flex items-center justify-center
+}
+.success-modal{
+    @apply  bg-purple-200 rounded-lg p-6 h-[30vh] w-[60vh] 
+}
+.user-main{
+    @apply border-4 border-gray-400 w-[8vw] h-[15vh] sm:w-[10vh] sm:h-[10] rounded-full items-center justify-center ml-28
+}
+.photo{
+    @apply w-full h-full rounded-full
+}
+.user-name{
+    @apply text-2xl font-sans mb-2
+} */
+
