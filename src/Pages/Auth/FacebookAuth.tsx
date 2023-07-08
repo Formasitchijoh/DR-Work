@@ -13,13 +13,47 @@ const FacebookAuth = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
 
-  const signInWithFacebook = async () => { 
-    const provider = new FacebookAuthProvider();
-    provider.addScope('user_birthday');
-    const {user} = await signInWithRedirect(fireauth, provider);
+  // const signInWithFacebook = async () => { 
+  //   const provider = new FacebookAuthProvider();
+  //   provider.addScope('user_birthday');
+  //   const {user} = await signInWithRedirect(fireauth, provider);
 
-    // if(user && user.data.)
-  };
+  // };
+
+  useEffect(()=>{
+    if(Boolean(user)){
+        navigate("/")
+    }
+},[user,navigate]);
+  
+const signInWithFacebook = async () => {
+  const provider = new FacebookAuthProvider();
+  provider.addScope('email');
+  provider.addScope('public_profile');
+
+  try {
+    const result = await signInWithPopup(fireauth, provider);
+    const user = result.user;
+    
+    const email = user.email;
+    const id = user.uid;
+    const picture = user.photoURL;
+    
+    console.log(email, id, picture);
+
+     if(user && user.email){
+      dispatch(
+        login({
+            email:user.email,
+            id:user.uid,
+            photoUrl:user.photoURL || null
+        })
+      )
+     }
+  } catch (error) {
+    console.log("Error signing in :",error);
+  }
+};
   
   // After the user is redirected back to your app, you can retrieve the user's information using the following code:
   
