@@ -8,6 +8,8 @@ import { User } from '../../Models/User'
 import { AuthState } from '../../Components/authSlice'
 import { signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { useNavigate } from 'react-router-dom'
+import { fetchSignInMethodsForEmail } from 'firebase/auth'
+
 const FacebookAuth = () => {
   const user = useAppSelector(state=>state.auth.user);
   const dispatch = useDispatch()
@@ -25,8 +27,8 @@ const FacebookAuth = () => {
         navigate("/")
     }
 },[user,navigate]);
-  
-const signInWithFacebook = async () => {
+
+const signInWithFacebook = async (): Promise<void> => {
   const provider = new FacebookAuthProvider();
   provider.addScope('email');
   provider.addScope('public_profile');
@@ -34,27 +36,39 @@ const signInWithFacebook = async () => {
   try {
     const result = await signInWithPopup(fireauth, provider);
     const user = result.user;
-    
-    const email = user.email;
-    const id = user.uid;
-    const picture = user.photoURL;
-    
+
+    const email: string | null = user.email;
+    const id: string = user.uid;
+    const picture: string | null = user.photoURL;
+
     console.log(email, id, picture);
 
-     if(user && user.email){
+    // Check if the email address is associated with an existing account
+    const signInMethods: string[] = await fetchSignInMethodsForEmail(fireauth, email);
+    
+    if (signInMethods.length === 0) {
+      // This is a new account, so create a new user record
       dispatch(
         login({
-            email:user.email,
-            id:user.uid,
-            photoUrl:user.photoURL || null
+            email: user.email ?? "",
+            id: user.uid,
+            photoUrl: user.photoURL || null
         })
-      )
-     }
+      );
+      navigate("/dash")
+    } else {
+      // An account already exists with this email address, so prompt the user to sign in or link their accounts
+      const newUser: User = {
+        email: user.email ?? "",
+        id: user.uid,
+        photoUrl: user.photoURL || null,
+      };
+      dispatch(login(newUser));
+      navigate('/dash');
+    }
 
-     console.log(`I am printing the user ong vercel ${JSON.stringify(user)}`);
-     
   } catch (error) {
-    console.log("Error signing in :",error);
+    console.log("Error signing in :", error);
   }
 };
   
