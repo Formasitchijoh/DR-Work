@@ -50,6 +50,9 @@ const signInWithFacebook = async () => {
         })
       )
      }
+
+     console.log(`I am printing the user ong vercel ${JSON.stringify(user)}`);
+     
   } catch (error) {
     console.log("Error signing in :",error);
   }
