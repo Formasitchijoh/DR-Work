@@ -10,14 +10,23 @@
     .header {
         @apply w-full h-11 flex justify-center items-center gap-20 bg-black
     }
-    .logog{
-        @apply w-30 h-full gap-16
+    .logo {
+        @apply w-10 h-full gap-16 
+    } 
+    .micro{
+        @apply w-10  h-full mt-2
+    }
+    .micro-img {
+        @apply w-3/4 my-1  max-h-full
+    }
+    .heading {
+        @apply w-36 h-full  p-1 
     }
     .logo-img{
         @apply  w-full  max-h-full
     }
     .header-text{
-        @apply text-2xl from-neutral-900 text-white
+        @apply text-xl from-neutral-900 text-white
     }
     .welcome-main{
         @apply flex flex-col justify-center items-center px-10 m-auto mt-20  gap-2 
@@ -70,6 +79,79 @@
 }
 .success{
     @apply text-gray-900 
+}
+
+/* Styling the diary Item  */
+.Item-card{
+    @apply w-full h-1/2 px-3 bg-teal-50 my-5
+}
+.Item-header{
+    @apply w-full   flex justify-around items-center m-auto 
+}
+
+.Item-img{
+    @apply bg-red-500 border-4 rounded-full w-1/4
+}
+.Item-image{
+    @apply w-full h-full
+} 
+.Item-name{
+    @apply font-sans text-xl text-gray-900 font-semibold
+}
+.Item-time .Item-time{
+    @apply text-lg font-semibold text-gray-500
+}
+
+.Item-Status{
+    @apply text-red-500  
+}
+.Item-body{
+    @apply w-full h-full m-auto
+}
+.Item-message{
+    @apply text-gray-900 text-lg m-auto
+
+}
+.new-entry{
+    @apply max-w-sm xl:w-[100vw] m-auto  h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
+}
+.create-new{
+    @apply w-full h-20 flex justify-around items-center
+}
+.create-text{
+    @apply font-bold font-sans text-xl text-gray-900
+}
+
+.x{
+    @apply font-sans text-3xl font-bold w-full h-full
+}
+.category{
+    @apply w-full h-20  m-auto  flex flex-col mx-1 
+}
+.text{
+    @apply font-sans text-xl text-gray-900 mb-1
+}
+.select{
+    @apply w-full  h-10 bg-gray-100  rounded-lg px-5 focus:pointer-events-none
+}
+.descript{
+    @apply w-full  flex flex-col  p-1
+}
+.text-area{
+    @apply w-full h-20 border-gray-100  border-2 mt-1 
+}
+.image-container{
+    @apply w-full  flex flex-col  p-1
+}
+.image{
+     @apply w-full h-28 border-gray-700  border-2 
+
+}
+.entry-status{
+    @apply w-full h-20  flex justify-around items-center 
+}
+.radio{
+    @apply w-5 h-5 border-gray-500 
 }
 }
 

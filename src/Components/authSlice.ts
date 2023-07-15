@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 
 import { User } from "../Models/User";
+import { DiaryItem } from ".././Models/DiaryItem";
 
 export interface AuthState {
   user: null | User;

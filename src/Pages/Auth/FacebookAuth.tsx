@@ -44,7 +44,7 @@ const signInWithFacebook = async (): Promise<void> => {
     console.log(email, id, picture);
 
     // Check if the email address is associated with an existing account
-    const signInMethods: string[] = await fetchSignInMethodsForEmail(fireauth, email);
+    const signInMethods: string[] = await fetchSignInMethodsForEmail(fireauth, email ?? "");
     
     if (signInMethods.length === 0) {
       // This is a new account, so create a new user record
@@ -91,6 +91,7 @@ const signInWithFacebook = async (): Promise<void> => {
 //     console.log(`userrrrrrr ${user}`);
 //   });
 // }
+
    
 
   return (

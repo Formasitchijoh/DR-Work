@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import logo from '../../resource/logo.png'
 import { useAppSelector, useAppDispatch } from '../../hooks/storeHook'
-
+import Header from '../../Components/Header/Header-Component'
+import DiaryItem from "../../Components/DiaryItem";
+import { Link } from "react-router-dom";
 const LoginSuccess: React.FC = () => {
     const user = useAppSelector(state=>state.auth.user);
     
@@ -28,19 +30,16 @@ const DashBoard = ()=>{
     useEffect(()=>{
             setInterval(()=>{
                    setIsLoggedIn(true);
-            },1000000)
+            },1000)
     },[])
     return (
       <>
-       <div className="main ">
-           <div className="header">
-            <div className='logo'>
-                <img src={logo} alt='web diary' className='logo-img'/>
-            </div>
-            <p className='header-text'>Home</p>
-        </div>
-         </div>
-
+         <Header/>
+         <Link to="/new-diary">
+         <DiaryItem/>
+         </Link>
+         <DiaryItem/>
+         <DiaryItem/>
          { !isLoggedIn && <LoginSuccess />}
       </>
        
