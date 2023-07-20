@@ -46,16 +46,14 @@ const EntryList = () => {
           });
         });
         setState(prevState => ({...prevState, diaryEntry: diaryentrys}));
-        dispatch(
-          addEntry(diaryentrys)
-        )
+       
       };
       useEffect(() => {
         DiaryServices.getAll().on("value", onDataChange);
         return () => {
          DiaryServices.getAll().off("value", onDataChange);
         }
-      }, []);
+      });
 
       const refreshList = () => {
         setState(prevState => ({...prevState, currentEntry: null, currentIndex: -1}));
@@ -73,11 +71,7 @@ const EntryList = () => {
           });
       };
       const { diaryEntry, currentEntry, currentIndex } = state;
-useEffect(()=>{
-  dispatch(
-    addEntry(
-      diaryEntry ) )
-},[])
+
 
        
       
