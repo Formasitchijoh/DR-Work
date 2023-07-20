@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { ChangeEvent, useEffect, useState } from "react";
 import logo from '../../resource/logo.png'
 import { useAppSelector, useAppDispatch } from '../../hooks/storeHook'
 import Header from '../../Components/Header/Header-Component'
@@ -9,6 +9,8 @@ import DiaryServices from "../../Components/services/diaentry.service";
 import DiaryData from "../../Components/types/diaryentry.type";
 import DiaryEntry from "../../Components/DiaryEntry/DiaryEntry";
 import SearchFilter from "../../Components/Search-filter";
+import { addEntry } from "../../Components/Slices/diaryItemSlice";
+
 type State = {
   diaryEntry: Array<DiaryData>,
   currentEntry: DiaryData | null,
@@ -43,10 +45,11 @@ const DashBoard = ()=>{
      currentEntry: null,
      currentIndex: -1,
    });
-  console.log(`Loggin the user in the Dashbord ${user}`);
-  
+
+ 
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [entrySummit, setEntrySummit] = useState(false)
+
     let diaryentries = new Array<DiaryData>();
     const onDataChange = (items: any) => {
       items.forEach((item: any) => {
@@ -62,7 +65,12 @@ const DashBoard = ()=>{
         });
       });
       setState(prevState => ({...prevState, diaryEntry: diaryentries}));
+      dispatch(
+        addEntry(diaryentries))
     };
+
+   console.log(`${JSON.stringify(diaryentry)}`);
+   
 
     const setActiveDiaryEntry = (diaryEntry: DiaryData, index: number) => {
       setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
@@ -82,7 +90,11 @@ const DashBoard = ()=>{
 },[])
 
 const { diaryEntry, currentEntry, currentIndex } = state;
-
+useEffect(()=>{
+  dispatch(
+    addEntry(
+      diaryEntry ) )
+},[diaryEntry,dispatch])
 
     return (
       <>
@@ -97,7 +109,7 @@ const { diaryEntry, currentEntry, currentIndex } = state;
          </Link>
           </div>
          </div>
-         <SearchFilter/>
+         <SearchFilter diaryEntry={diaryEntry}/>
         
          <ul className="list-group">
 
@@ -123,7 +135,3 @@ onClick={() => setActiveDiaryEntry(entry, index)}
   };
 
 export default DashBoard
-
-//    <button className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg" onClick={handleLogin}>
-//       Log In
-//     </button> 
