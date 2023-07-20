@@ -1,12 +1,13 @@
 import React, { useEffect,useState } from 'react'
 import { Link, useNavigate} from 'react-router-dom'
-import Header from '../../Components/Header/Header'
+import Header from '../../Components/Header/Header-Component'
 import logo from '../../resource/logo.png'
 import { useAppDispatch,useAppSelector } from '../../hooks/storeHook'
 import { firedb,fireauth } from '../../firebase'
-import { GoogleAuthProvider,signInWithPopup, signInWithRedirect } from 'firebase/auth'
-import { login } from '../../Components/authSlice'
+import { login } from '../../Components/Slices/authSlice'
 import FacebookAuth from '../Auth/FacebookAuth'
+import Footer from '../../Components/Footer/Footer'
+import firebase from '../../firebase'
 const Login = () => {
 
     const {user} = useAppSelector((state)=>state.auth)
@@ -24,8 +25,8 @@ const Login = () => {
     const signInWithGoogle = async ()=>{
 
         try{
-            const provider = new GoogleAuthProvider();
-            const {user} =  await signInWithPopup(fireauth,provider);
+            const provider = new firebase.auth.GoogleAuthProvider();
+            const {user} =  await fireauth.signInWithPopup(provider);
             if(user && user.email){
                 dispatch(
                 login({
@@ -43,7 +44,7 @@ const Login = () => {
             }
             navigate("/dash")  
 
-            console.log(`loggin the user ${user.displayName} and ${userName}`);
+            console.log(`loggin the user ${user?.displayName} and ${userName}`);
             
            
     
@@ -59,12 +60,7 @@ const Login = () => {
    
   return ( 
     <div className='main'>
-        <div className="header">
-            <div className='logo'>
-                <img src={logo} alt='web diary' className='logo-img'/>
-            </div>
-            <p className='header-text'>Private Journal</p>
-        </div>
+        <Header/>
         <div className='welcome-main'>
             <h1 className='welcome-header'>Welcome to  private diary</h1>
                 <div className='w-full '>
@@ -87,10 +83,7 @@ const Login = () => {
                 <FacebookAuth/>
              </div>
         </div>
-        <div className='footer'>
-            <span className='dr-tech'>DRTech @ 2023</span>
-            <span className='privacy'>Privary policy | T&C</span>
-        </div>
+      <Footer/>
     </div>
   )
 }
