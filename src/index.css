@@ -83,10 +83,10 @@
 
 /* Styling the diary Item  */
 .Item-card{
-    @apply w-full h-1/2 px-3 bg-teal-50 my-5
+    @apply px-3 bg-teal-50  w-full h-1/2
 }
 .Item-header{
-    @apply w-full   flex justify-around items-center m-auto 
+    @apply w-full flex justify-around items-center m-auto 
 }
 
 .Item-img{

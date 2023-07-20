@@ -4,10 +4,10 @@ import Header from '../../Components/Header/Header-Component'
 import logo from '../../resource/logo.png'
 import { useAppDispatch,useAppSelector } from '../../hooks/storeHook'
 import { firedb,fireauth } from '../../firebase'
-import { GoogleAuthProvider,signInWithPopup, signInWithRedirect } from 'firebase/auth'
-import { login } from '../../Components/authSlice'
+import { login } from '../../Components/Slices/authSlice'
 import FacebookAuth from '../Auth/FacebookAuth'
-import Footer from '../../Components/Footer'
+import Footer from '../../Components/Footer/Footer'
+import firebase from '../../firebase'
 const Login = () => {
 
     const {user} = useAppSelector((state)=>state.auth)
@@ -25,8 +25,8 @@ const Login = () => {
     const signInWithGoogle = async ()=>{
 
         try{
-            const provider = new GoogleAuthProvider();
-            const {user} =  await signInWithPopup(fireauth,provider);
+            const provider = new firebase.auth.GoogleAuthProvider();
+            const {user} =  await fireauth.signInWithPopup(provider);
             if(user && user.email){
                 dispatch(
                 login({
@@ -44,7 +44,7 @@ const Login = () => {
             }
             navigate("/dash")  
 
-            console.log(`loggin the user ${user.displayName} and ${userName}`);
+            console.log(`loggin the user ${user?.displayName} and ${userName}`);
             
            
     

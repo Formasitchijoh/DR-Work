@@ -1,7 +1,7 @@
 import { configureStore, createSlice} from '@reduxjs/toolkit';
 import { useReducer } from 'react';
-import authSlice from './Components/authSlice';
-import diaryItemSlice from './Components/diaryItemSlice';
+import authSlice from './Components/Slices/authSlice';
+import diaryItemSlice from './Components/Slices/diaryItemSlice';
 
 export const store = configureStore({
     reducer:{
