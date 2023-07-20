@@ -1,0 +1,45 @@
+import React,{useState} from 'react'
+import logo from '../../resource/logo.png'
+import { yupResolver } from '@hookform/resolvers/yup'
+import { useForm } from 'react-hook-form'
+import DiaryData from '../types/diaryentry.type'
+import {BiSolidLockOpen} from 'react-icons/bi'
+import { BiSolidLock} from 'react-icons/bi'
+
+type Props ={
+ diaryEntry:DiaryData
+}
+
+const DiaryEntry = (props:Props) => { 
+
+  return (
+    <div className='Item-card'>
+      <div className='Item-header'>
+        <div className='Item-img'>
+              <img src={props.diaryEntry.image} alt='img' className='Item-image'/>
+        </div>
+        <div className='item-details'>
+                <span className='Item-name'>{props.diaryEntry.category}</span>
+                <div className='Item-time'>
+                  <span className='Item-date'>{props.diaryEntry.timeStamps}</span>
+                </div>
+                {props.diaryEntry.status ? (
+                  <div className='flex gap-2 justify-center items-center mr-10'>
+                <span className='Item-Status'>Public</span><span className='text-red-500'><BiSolidLockOpen/></span>
+                  </div>
+              ):(
+                <div className='flex gap-1 justify-center items-center mr-10'>
+                <span className='Item-Status text-teal-500'>Private</span><span className='text-green-500'><BiSolidLock/></span>
+                  </div>
+              )}
+        </div>
+      </div>
+      <div className='Item-body'>
+        <span className='Item-message'>{props.diaryEntry.description}</span>
+      </div>
+
+    </div>
+  )
+}
+
+export default DiaryEntry
