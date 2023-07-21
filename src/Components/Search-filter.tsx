@@ -17,8 +17,6 @@ interface Props {
   displayAll: React.Dispatch<React.SetStateAction<boolean>>
 
 }
-interface StartSearch{
-}
 
 const SearchFilter : React.FC<Props> = ({ diaryEntry,displayAll }) => {
   console.log("i am in the select category" + JSON.stringify(diaryEntry));
