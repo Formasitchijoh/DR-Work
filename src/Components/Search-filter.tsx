@@ -1,4 +1,4 @@
-import React,{ChangeEvent, useState} from 'react'
+import React,{ChangeEvent, useEffect, useState} from 'react'
 import {BiSearch} from 'react-icons/bi'
 import { CiFilter } from 'react-icons/ci'
 import DiaryData from './types/diaryentry.type'
@@ -13,28 +13,15 @@ type Post={
 
 
 interface Props {
-  diaryEntry: DiaryData[];
+  diaryEntry: DiaryData[],
+  displayAll: React.Dispatch<React.SetStateAction<boolean>>
+
 }
-const posts:Post[] = [
-    { 
-      url: '',
-      tags: ['react', 'blog'],
-      title: 'I will go to Muea market tomorrow to buy groceries for my mother',
-    },
-    {
-      url:'',
-      tags: ['node','express'],
-      title: 'Being alone is hard. I don\'t know how to do it',
-    },
-    {
-        url:'',
-        tags: ['node','express'],
-        title: 'Being alone is hard. I don\'t will go to Muea market tomorrow to buy groceries  know how to do it',
-      },
-    // more data here
-  ]
-const SearchFilter = (props:Props) => {
-  console.log("i am in the select category" + JSON.stringify(props.diaryEntry));
+interface StartSearch{
+}
+
+const SearchFilter : React.FC<Props> = ({ diaryEntry,displayAll }) => {
+  console.log("i am in the select category" + JSON.stringify(diaryEntry));
   const CATEGORIES = ["Food","Laundry","Agriculture","Many"];
   type Fruit = typeof CATEGORIES[number];
  const [selected, setselected] = useState<Fruit>(CATEGORIES[0])
@@ -43,8 +30,10 @@ const SearchFilter = (props:Props) => {
         query:'',
         list:[] as DiaryData[]
     })
+
     const handleChange = (e:ChangeEvent<HTMLInputElement>) =>{
-        const results = props.diaryEntry.filter(entry=>{
+     displayAll(false)
+        const results = diaryEntry.filter(entry=>{
             if(e.target.value === "") return entry
             return entry.description.toLowerCase().includes(e.target.value.toLocaleLowerCase())
         })
@@ -54,9 +43,10 @@ const SearchFilter = (props:Props) => {
 
         })
     }
-    const handleIsSelect = (option:string) =>{
+    const handleIsSelect = (option:string = CATEGORIES[0]) =>{
+     displayAll(false)
       setselected(option)
-      const results = props.diaryEntry.filter(entry=>{
+      const results = diaryEntry.filter(entry=>{
         if(!option) return entry
         return entry.category.toLowerCase() === option.toLowerCase()
       })
