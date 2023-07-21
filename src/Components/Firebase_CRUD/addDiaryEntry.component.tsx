@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import formateDate from "../timeStamp";
 import defaultImg from "../../resource/logo.png"
+import defaultimage1 from "../../resource/default.jpg"
+import defaultimage2 from "../../resource/diary.jpg"
 type Props = {};
 
 type State = DiaryData & {
@@ -20,7 +22,6 @@ type State = DiaryData & {
 
 const AddDiaryEntry =() =>{
     const { diaryentry } = useAppSelector((state)=>state.diaryEntry)
-    const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const [state, setState] = useState({
         category: "",
@@ -32,6 +33,7 @@ const AddDiaryEntry =() =>{
     })
     const allInputs = {imgUrl: ''}
     const [imageAsFile, setImageAsFile] = useState<File | undefined>(undefined);
+    const [defImage, setdefImage] = useState(defaultimage2)
     const [imageAsUrl, setImageAsUrl] = useState(allInputs)
     const [selectedOption, setSelectedOption] = useState<DiaryData | null>(null);
   const CATEGORIES = ["Food", "Laundry", "Agriculture"] ;
@@ -54,12 +56,14 @@ const AddDiaryEntry =() =>{
         }))
         setSelected(e.target.value)
     }
+
     const handleDescriptionChange =(e: ChangeEvent<HTMLInputElement>) =>{
         setState((prevState) =>({
             ...prevState,description: e.target.value,category: selected
         }))
 
     }
+
     const handleCheckboxChange = (e:any) =>{
         const isChecked = e.target.checked;
         setState(prevState =>({
@@ -77,59 +81,82 @@ const AddDiaryEntry =() =>{
           ...prev,category: selected
         }))
 
-        alert(state.category)
-       
         if (!imageAsFile) {
-            console.error(`not an image, the image file is a ${typeof (imageAsFile)}`);
-            return;
-          }
-
-        const uploadEntry = storage.ref(`/images/${imageAsFile.name}`).put(imageAsFile);
-        uploadEntry.on(
-            'state_changed',
-            (snapShot: any) => {
-                console.log(snapShot);
-                
-            },
-            (err: any) =>{
-                console.log(`The error ${err}`)
-            },
-            () =>{
-                storage
-                .ref('images')
-                .child(imageAsFile.name)
-                .getDownloadURL()
-                .then((firebaseURL: any) =>{
-                  const data = {
-                    category:state.category,
-                    description:state.description,
-                    image: firebaseURL,
-                    status:state.status,
-                    timeStamps:formateDate()
-                  }
-                  DiaryServices.create(data)
-                  .then(() =>{
-                    setImageAsUrl((prev) =>({...prev,imgUrl:firebaseURL}));
-                    setState((prevState)=>({
-                        ...prevState,submitted:true
-                    })) 
-                   
-
-                      
-                    console.log(`The status of the entry  ${state.status}`);
-                    
-                })
-                    setImageAsUrl((prevObject)=>({...prevObject,imgUrl:firebaseURL}))
-                    navigate("/dash")
-
-                })
-                
-                .catch((e: Error) => {
-                    console.log(e);
-                  });
+            // console.error(`not an image, the image file is a ${typeof (imageAsFile)}`);
+            const data = {
+              category:state.category,
+              description:state.description,
+              image: defImage,
+              status:state.status,
+              timeStamps:formateDate()
             }
+            DiaryServices.create(data)
+            .then(() =>{
+              setImageAsUrl((prev) =>({...prev,imgUrl:defImage}));
+              setState((prevState)=>({
+                  ...prevState,submitted:true
+              })) 
+             
+
+                
+              console.log(`The status of the entry  ${state.status}`);
+              
+          })
+              setImageAsUrl((prevObject)=>({...prevObject,imgUrl:defImage}))
+              navigate("/dash")
+
+          }
+          
+          else{
+            const uploadEntry = storage.ref(`/images/${imageAsFile.name}`).put(imageAsFile);
+            uploadEntry.on(
+                'state_changed',
+                (snapShot: any) => {
+                    console.log(snapShot);
+                    
+                },
+                (err: any) =>{
+                    console.log(`The error ${err}`)
+                },
+                () =>{
+                    storage
+                    .ref('images')
+                    .child(imageAsFile.name)
+                    .getDownloadURL()
+                    .then((firebaseURL: any) =>{
+                      const data = {
+                        category:state.category,
+                        description:state.description,
+                        image: firebaseURL,
+                        status:state.status,
+                        timeStamps:formateDate()
+                      }
+                      DiaryServices.create(data)
+                      .then(() =>{
+                        setImageAsUrl((prev) =>({...prev,imgUrl:firebaseURL}));
+                        setState((prevState)=>({
+                            ...prevState,submitted:true
+                        })) 
+                       
+    
+                          
+                        console.log(`The status of the entry  ${state.status}`);
+                        
+                    })
+                        setImageAsUrl((prevObject)=>({...prevObject,imgUrl:firebaseURL}))
+                        navigate("/dash")
+    
+                    })
+                    
+                    .catch((e: Error) => {
+                        console.log(e);
+                      });
+                }
+                
+            );
             
-        );
+          }
+       
       };
 
       const clearField = () =>{
@@ -144,6 +171,10 @@ const AddDiaryEntry =() =>{
     }
 
    
+    useEffect(()=>{
+      console.log(`${typeof defaultimage1}`);
+      
+    })
 
     return (
         <div className='new-entry'>
