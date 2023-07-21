@@ -11,6 +11,7 @@ import { addEntry } from "../Slices/diaryItemSlice";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import formateDate from "../timeStamp";
+import defaultImg from "../../resource/logo.png"
 type Props = {};
 
 type State = DiaryData & {
@@ -59,10 +60,6 @@ const AddDiaryEntry =() =>{
         }))
 
     }
-
-  // useEffect(()=>{
-  //     navigate("/dash")
-  // },[state.submitted])
     const handleCheckboxChange = (e:any) =>{
         const isChecked = e.target.checked;
         setState(prevState =>({
