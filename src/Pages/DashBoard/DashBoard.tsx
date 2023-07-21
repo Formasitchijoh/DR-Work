@@ -49,6 +49,7 @@ const DashBoard = ()=>{
  
     const [isLoggedIn, setIsLoggedIn] = useState(true);
     const [entrySummit, setEntrySummit] = useState(false)
+    const [isDisplay, setisDisplay] = useState(true)
 
     let diaryentries = new Array<DiaryData>();
     const onDataChange = (items: any) => {
@@ -109,21 +110,21 @@ useEffect(()=>{
          </Link>
           </div>
          </div>
-         <SearchFilter diaryEntry={diaryEntry}/>
+         <SearchFilter diaryEntry={diaryEntry} displayAll={setisDisplay}/>
         
          <ul className="list-group">
 
-{/* {diaryEntry.map((entry,index)=>(
-<li  key={entry.key}
-className={
-   " w-11/12 my-5  ml-4 text-xl  bg-teal-100 border-2 border-gray-100 flex justify-center items-center" +
-(index === currentIndex ? "active" : "")
-   }
-onClick={() => setActiveDiaryEntry(entry, index)}
-  >
-    <DiaryEntry diaryEntry={entry}/>
-     </li>
-))} */}
+            {isDisplay? (diaryEntry.map((entry,index)=>(
+            <li  key={entry.key}
+            className={
+              " w-11/12 my-5  ml-4 text-xl  bg-teal-100 border-2 border-gray-100 flex justify-center items-center" +
+            (index === currentIndex ? "active" : "")
+              }
+            onClick={() => setActiveDiaryEntry(entry, index)}
+              >
+                <DiaryEntry diaryEntry={entry}/>
+                </li>
+            ))): null }
 
 </ul>
          { !isLoggedIn && <LoginSuccess />}
