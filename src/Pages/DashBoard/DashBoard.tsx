@@ -113,7 +113,7 @@ useEffect(()=>{
         
          <ul className="list-group">
 
-{diaryEntry.map((entry,index)=>(
+{/* {diaryEntry.map((entry,index)=>(
 <li  key={entry.key}
 className={
    " w-11/12 my-5  ml-4 text-xl  bg-teal-100 border-2 border-gray-100 flex justify-center items-center" +
@@ -123,7 +123,7 @@ onClick={() => setActiveDiaryEntry(entry, index)}
   >
     <DiaryEntry diaryEntry={entry}/>
      </li>
-))}
+))} */}
 
 </ul>
          { !isLoggedIn && <LoginSuccess />}
