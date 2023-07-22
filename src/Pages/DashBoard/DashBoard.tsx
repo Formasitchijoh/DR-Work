@@ -98,7 +98,7 @@ useEffect(()=>{
 },[diaryEntry,dispatch])
 
     return (
-      <>
+      <div className="main">
          <Header/>
          <div className="w-full my-4 mx-2 flex justify-between items-center">
           <div className="w-1/2 ">
@@ -106,18 +106,20 @@ useEffect(()=>{
           </div>
           <div className="w-1/2  mr-5 justify-end flex ">
           <Link to="/add" >
-          <button className="text-white bg-gray-900 text-xl px-2 w-15 rounded-sm">Add</button>
+          <button className="text-white bg-gray-900 text-sm px-3 w-30 items-center h-7 rounded-sm">New entry</button>
          </Link>
           </div>
          </div>
+         <div className="w-full ">
          <SearchFilter diaryEntry={diaryEntry} displayAll={setisDisplay}/>
+         </div>
         
          <ul className="list-group">
 
             {isDisplay? (diaryEntry.map((entry,index)=>(
             <li  key={entry.key}
             className={
-              " w-11/12 my-5  ml-4 text-xl  bg-teal-100 border-2 border-gray-100 flex justify-center items-center" +
+              " " +
             (index === currentIndex ? "active" : "")
               }
             onClick={() => setActiveDiaryEntry(entry, index)}
@@ -130,7 +132,7 @@ useEffect(()=>{
          { !isLoggedIn && <LoginSuccess />}
          {/* { !entrySummit && <LoginSuccess />} */}
 
-      </>
+      </div>
        
     );
   };

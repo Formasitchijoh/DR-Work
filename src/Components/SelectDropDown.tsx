@@ -41,7 +41,7 @@ export function CustomSelect<Value>({
   };
 
   return (
-    <select value={toValue(value)} onChange={handleChange} className='w-full h-10 bg-gray-100 mr-5 border-1 border-gray-500'>
+    <select value={toValue(value)} onChange={handleChange} className='select-option'>
       {options.map((value) => (
         <option value={toValue(value)} key={toValue(value)}>
           {toLabel(value)}
