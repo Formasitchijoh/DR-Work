@@ -24,11 +24,11 @@ const DiaryEntry = (props:Props) => {
                   <span className='Item-date'>{props.diaryEntry.timeStamps}</span>
                 </div>
                 {props.diaryEntry.status ? (
-                  <div className='flex gap-2 justify-center items-center mr-10'>
+                  <div className='flex gap-2 justify-start items-center  '>
                 <span className='Item-Status'>Public</span><span className='text-red-500'><BiSolidLockOpen/></span>
                   </div>
               ):(
-                <div className='flex gap-1 justify-center items-center mr-10'>
+                <div className='flex gap-2 justify-start items-center '>
                 <span className='Item-Status text-teal-500'>Private</span><span className='text-green-500'><BiSolidLock/></span>
                   </div>
               )}

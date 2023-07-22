@@ -1,6 +1,6 @@
 import React from 'react'
 import logo from '../../resource/logo.png'
-import micro from "../../resource/microphone.png"
+import person from "../../resource/pajamas-profile.svg"
 
 const Header = () => {
   return (
@@ -13,7 +13,7 @@ const Header = () => {
             <p className='header-text'>Private Journal</p>
             </div>
             <div className='micro'>
-                <img src={micro} alt='web diary' className='micro-img'/>
+                <img src={person} alt='web diary' className='micro-img'/>
             </div>
         </div>
    </>
