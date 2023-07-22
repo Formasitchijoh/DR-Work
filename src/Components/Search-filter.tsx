@@ -59,17 +59,14 @@ const SearchFilter : React.FC<Props> = ({ diaryEntry,displayAll }) => {
       return(
         < div className='absolute z-50 right-5 top-10 w-1/2 h-10 '>
         <div className=" ">Value:{selected}</div>
-        <CustomSelect value={selected} onChange={handleIsSelect} options={CATEGORIES}  />
+        <CustomSelect  value={selected} onChange={handleIsSelect} options={CATEGORIES}  />
         </div>
       )
     }
   return (
-    <>
-    {/* {
-      state.list[0].category && <h2>{state.list[0].category}</h2>
-    } */}
-    <div className='w-full flex justify-evenly items-center'>
-        <form className='flex justify-between items-center border-b-2 border-gray-500'>
+    <div className='mb-5' >
+    <div className='w-full flex justify-around items-center'>
+        <form className='flex  items-center border-b-2 border-gray-500 w-11/12 ml-5'>
             <input
              type='search'
               placeholder='Type here to search' 
@@ -79,8 +76,8 @@ const SearchFilter : React.FC<Props> = ({ diaryEntry,displayAll }) => {
             <button className='text-2xl font-bold'><BiSearch/></button>
         </form>
        
-        <div className='border-b-2 border-gray-500'>
-          <button onClick={()=> setisSelect(true)} ><CiFilter/></button>
+        <div className='border-b-2 border-gray-500 block items-center w-1/4 mx-5  justify-center'>
+          <button onClick={()=> setisSelect(true)} ><CiFilter className=' block items-center  mx-5 text-xl justify-center'/></button>
         </div>
     </div>
         <ul>
@@ -94,7 +91,7 @@ const SearchFilter : React.FC<Props> = ({ diaryEntry,displayAll }) => {
         </ul>
 
         {isSelect && <SelectedCategory/>}
-    </>
+    </div>
     
   )
 }

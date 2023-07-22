@@ -1,4 +1,4 @@
-import React,{useState,ChangeEvent, useEffect} from "react";
+import React,{useState,ChangeEvent, useEffect, ChangeEventHandler} from "react";
 import DiaryData from "../types/diaryentry.type";
 import { storage } from "../../firebase";
 import firebase from "../../firebase";
@@ -14,6 +14,7 @@ import formateDate from "../timeStamp";
 import defaultImg from "../../resource/logo.png"
 import defaultimage1 from "../../resource/default.jpg"
 import defaultimage2 from "../../resource/diary.jpg"
+import { URL } from "url";
 type Props = {};
 
 type State = DiaryData & {
@@ -35,6 +36,7 @@ const AddDiaryEntry =() =>{
     const [imageAsFile, setImageAsFile] = useState<File | undefined>(undefined);
     const [defImage, setdefImage] = useState(defaultimage2)
     const [imageAsUrl, setImageAsUrl] = useState(allInputs)
+    const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
     const [selectedOption, setSelectedOption] = useState<DiaryData | null>(null);
   const CATEGORIES = ["Food", "Laundry", "Agriculture"] ;
   type Fruit = typeof CATEGORIES[number];
@@ -42,10 +44,9 @@ const AddDiaryEntry =() =>{
   
   const SelectCategory = () => {
     return (
-      <>
-        <div className='w-full h-10'>Value: {selected}</div>
+      <div className="w-12/12 mr-3 ">
         <CustomSelect value={selected} onChange={setSelected} options={CATEGORIES} />
-      </>
+      </div>
     );
   };
 
@@ -57,12 +58,14 @@ const AddDiaryEntry =() =>{
         setSelected(e.target.value)
     }
 
-    const handleDescriptionChange =(e: ChangeEvent<HTMLInputElement>) =>{
-        setState((prevState) =>({
-            ...prevState,description: e.target.value,category: selected
-        }))
-
-    }
+   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const value = event.target.value;
+  setState((prevState) => ({
+    ...prevState,
+    description: value,
+    category: selected
+  }));
+}
 
     const handleCheckboxChange = (e:any) =>{
         const isChecked = e.target.checked;
@@ -71,10 +74,19 @@ const AddDiaryEntry =() =>{
           status:isChecked
         }));
       }
-      const handleImageAsFile = (e: ChangeEvent<HTMLInputElement>) => {
-        const image = e.target.files?.[0];
-        setImageAsFile(image);
+
+      const handleImageAsFile  = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        setImageAsFile(file)
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            setdisplayImage(reader.result as string);
+          };
+          reader.readAsDataURL(file);
+        }
       };
+
       const handleFireBaseUpload = (e:any) =>{
         e.preventDefault();
         setState((prev) =>({
@@ -189,18 +201,19 @@ const AddDiaryEntry =() =>{
                    Add
                  </button>
                  <img src={imageAsUrl.imgUrl} alt="tag" />
-       
                </div>
             ):(
-                <>
+                <div className="w-12/12 mx-3  h-full">
                  <div className='create-new'>
-            <span className='create-text'>Create a New diary</span>
+            <span className='create-text'>Create a new diary</span>
             <div className='close'>
+              <button className="float-right w-1/2" onClick={()=> navigate("/dash")}>
               <span className='x'>X</span>
+              </button>
             </div>
           </div>
-          <form >
-          <div className='category mb-8'>
+          <form  className="w-12/12 mr-2">
+          <div className='category'>
             <span className='text'> Category </span>
             <div className='h-1/4 w-full'>
                 <SelectCategory/>
@@ -209,18 +222,22 @@ const AddDiaryEntry =() =>{
     
           <div className='descript '>
             <span className='text'>Description</span>
-            <input
+            <textarea
              name='description'
               onChange={handleDescriptionChange} 
               placeholder='Enter description here'
-               className='text-area'>
-            </input>
+               className='text-area align-top border-2 border-gray-500 rounded-sm '/>
           </div>
-         <div>
-            <input
-            type="file"
-            onChange={handleImageAsFile}
-            />
+         <div className="w-12/12 ml-1  bg-gray-50 p-10 border-2 border-gray-500 rounded-sm">
+         <span className='text'>Upload image(Optional)</span>
+          {
+            !displayImage ? ( <input
+              type="file"
+              onChange={handleImageAsFile}
+              />):
+              <div className="w-12/12 ml-1 ">
+                <img src={displayImage} alt=""/>
+               </div>} 
          </div>
           <div className='entry-status'>
             <input
@@ -231,11 +248,11 @@ const AddDiaryEntry =() =>{
                  onChange={handleCheckboxChange} />
             <span>Check to confirm if you want to continue</span>
           </div>
-          <div  className='facebook-main '>
-            <button onClick={handleFireBaseUpload}  className=' text-xl text-white'>Sign in with Google</button>
+          <div  className='facebook-main mx-0 my-0 '>
+            <button onClick={handleFireBaseUpload}  className=' text-xl text-white'>Save</button>
             </div>
           </form>
-                </>
+                </div>
 
             )}
          
