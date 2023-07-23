@@ -1,3 +1,4 @@
+import moment from "moment";
 import DiaryData from "../types/diaryentry.type";
 const entries = (): IterableIterator<[number, DiaryData]> => {
   const data: DiaryData[] = [
@@ -6,6 +7,8 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: false,
+      startDate:'',
+      endDate:'',
       timeStamps:''
     },
     {
@@ -13,6 +16,8 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: true,
+      startDate:'',
+      endDate:'',
       timeStamps:''
 
     },
@@ -21,6 +26,8 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: false,
+      startDate:'',
+      endDate:'',
       timeStamps:''
 
     },
@@ -29,6 +36,8 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: true,
+      startDate:'',
+      endDate:'',
       timeStamps:''
 
     },
