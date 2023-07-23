@@ -1,10 +1,12 @@
-import React,{ChangeEvent, useEffect, useState} from 'react'
+import React,{ChangeEvent, useEffect, useState,useCallback} from 'react'
 import {BiSearch} from 'react-icons/bi'
 import { CiFilter } from 'react-icons/ci'
 import DiaryData from './types/diaryentry.type'
 import DiaryEntry from './DiaryEntry/DiaryEntry'
 import { CustomSelect } from ".././Components/SelectDropDown";
-
+import { useAppSelector } from '../hooks/storeHook'
+import DiaryEntryForm from './datePicker'
+import moment from 'moment'
 type Post={
     url:string,
     tags:string[],
@@ -17,30 +19,67 @@ interface Props {
   displayAll: React.Dispatch<React.SetStateAction<boolean>>
 
 }
+type handles = {
+ startDate:moment.Moment | null,
+  endDate: moment.Moment | null
+}
 
 const SearchFilter : React.FC<Props> = ({ diaryEntry,displayAll }) => {
+ 
+  const { diaryentry } = useAppSelector(state=>state.diaryEntry)
+  
   console.log("i am in the select category" + JSON.stringify(diaryEntry));
   const CATEGORIES = ["Food","Laundry","Agriculture","Many"];
   type Fruit = typeof CATEGORIES[number];
  const [selected, setselected] = useState<Fruit>(CATEGORIES[0])
  const [isSelect, setisSelect] = useState(false)
+ const [isDatedisplay, setisDatedisplay] = useState(false)
     const [state, setstate] = useState({
         query:'',
         list:[] as DiaryData[]
     })
 
+    const [initDate, setInitDate] = useState<moment.Moment | null>(null);
+    const [dateEnd, setDateEnd] = useState<moment.Moment | null>(null);
+    const [dateInput, setDateInput] = useState<"startDate" | "endDate" | null>(null);
+    
     const handleChange = (e:ChangeEvent<HTMLInputElement>) =>{
      displayAll(false)
         const results = diaryEntry.filter(entry=>{
             if(e.target.value === "") return entry
             return entry.description.toLowerCase().includes(e.target.value.toLocaleLowerCase())
-        })
+        }) 
+        
         setstate({
             query: e.target.value,
             list: results
 
         })
     }
+    
+   
+    const handleDateSelect = useCallback(() => {
+      displayAll(false);
+    
+      if (initDate && dateEnd) {
+        const results = diaryEntry.filter((entry) => {
+          const startDate = moment(entry.startDate, "ll");
+          return startDate.isBetween(initDate, dateEnd, "day", "[]");
+        });
+    
+        setisDatedisplay(true);
+        setstate({
+          query: "",
+          list: results,
+        });
+      }
+    }, [diaryEntry, initDate, dateEnd]);
+
+    useEffect(()=>{
+    if(initDate && dateEnd){
+      handleDateSelect()
+    }
+    })
     const handleIsSelect = (option:string = CATEGORIES[0]) =>{
      displayAll(false)
       setselected(option)
@@ -57,8 +96,10 @@ const SearchFilter : React.FC<Props> = ({ diaryEntry,displayAll }) => {
 
     const SelectedCategory = () =>{
       return(
-        < div className='absolute z-50 right-5 top-10 w-1/2 h-10 '>
-        <div className=" ">Value:{selected}</div>
+        < div className='absolute top-10 left-1/2 w-1/4 h-1/2 bg-gray-100 '> 
+          <div className='mb-5'>
+       <DiaryEntryForm setDateEnd={setDateEnd} setInitDate={setInitDate} setDateInput={setDateInput} dateEnd={dateEnd} initDate={initDate} dateInput={dateInput} moments={moment()}/> 
+          </div>
         <CustomSelect  value={selected} onChange={handleIsSelect} options={CATEGORIES}  />
         </div>
       )

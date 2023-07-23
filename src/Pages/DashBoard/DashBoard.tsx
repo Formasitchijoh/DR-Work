@@ -1,10 +1,7 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import logo from '../../resource/logo.png'
+import React, {  useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from '../../hooks/storeHook'
 import Header from '../../Components/Header/Header-Component'
-import DiaryItem from "../../Components/DiaryEntry/DiaryEntry";
 import { Link } from "react-router-dom";
-import { UseSelector, useSelector } from "react-redux/es/hooks/useSelector";
 import DiaryServices from "../../Components/services/diaentry.service";
 import DiaryData from "../../Components/types/diaryentry.type";
 import DiaryEntry from "../../Components/DiaryEntry/DiaryEntry";
@@ -56,12 +53,14 @@ const DashBoard = ()=>{
       items.forEach((item: any) => {
         let key = item.key;
         let data = item.val();
-        diaryentries.push({
+        diaryentries.unshift({
           key: key,
           category: data.category,
           description: data.description,
           image: data.image,
           status: data.status,
+          startDate:data.startDate,
+          endDate:data.endDate,
           timeStamps:data.timeStamps
         });
       });
@@ -69,9 +68,6 @@ const DashBoard = ()=>{
       dispatch(
         addEntry(diaryentries))
     };
-
-   console.log(`${JSON.stringify(diaryentry)}`);
-   
 
     const setActiveDiaryEntry = (diaryEntry: DiaryData, index: number) => {
       setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
@@ -90,6 +86,7 @@ const DashBoard = ()=>{
    },1000)}
 },[])
 
+//getting the diaryEntry from the state stored from the firebase fetch and storing it in the redux store
 const { diaryEntry, currentEntry, currentIndex } = state;
 useEffect(()=>{
   dispatch(
@@ -111,12 +108,12 @@ useEffect(()=>{
           </div>
          </div>
          <div className="w-full ">
-         <SearchFilter diaryEntry={diaryEntry} displayAll={setisDisplay}/>
+         <SearchFilter diaryEntry={diaryentry} displayAll={setisDisplay}/>
          </div>
         
          <ul className="list-group">
 
-            {isDisplay? (diaryEntry.map((entry,index)=>(
+            {isDisplay? (diaryentry.map((entry,index)=>(
             <li  key={entry.key}
             className={
               " " +
@@ -130,8 +127,6 @@ useEffect(()=>{
 
 </ul>
          { !isLoggedIn && <LoginSuccess />}
-         {/* { !entrySummit && <LoginSuccess />} */}
-
       </div>
        
     );

@@ -25,6 +25,8 @@ const DiaryEntrys = (props:Props) => {
             category: props.diaryEntry.category || "",
             description: props.diaryEntry.description || "",
             image: props.diaryEntry.image || "" ,
+            startDate:props.diaryEntry.startDate || "",
+            endDate:props.diaryEntry.endDate || "",
             status: props.diaryEntry.status || false,
         },
         message:"",
@@ -138,6 +140,8 @@ const DiaryEntrys = (props:Props) => {
                 category:state.currentDiaryEntry.category,
                 description:state.currentDiaryEntry.description,
                 image:state.currentDiaryEntry.image,
+                startDate:state.currentDiaryEntry.startDate,
+                endDate:state.currentDiaryEntry.endDate,
                 status:state.currentDiaryEntry.status
             }
             DiaryServices.update(state.currentDiaryEntry.key,data)

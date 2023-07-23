@@ -4,7 +4,7 @@
 
 @layer components {
     .main {
-        @apply max-w-sm xl:w-[100vw] m-auto  min-h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
+        @apply xl:max-w-2xl max-w-sm xl:w-[100vw] m-auto  min-h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
     }
 
     .header {
