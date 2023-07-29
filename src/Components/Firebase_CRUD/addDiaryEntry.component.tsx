@@ -1,31 +1,21 @@
-import React,{useState,ChangeEvent, useEffect, ChangeEventHandler} from "react";
-import DiaryData from "../types/diaryentry.type";
-import { storage } from "../../firebase";
-import firebase from "../../firebase";
-import DiaryServices from "../services/diaentry.service";
+import React,{useState,ChangeEvent} from "react";
+import { fireauth, firedb, storageRef } from "../../firebase"
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import Footer from "../Footer/Footer";
-import Header from "../Header/Header";
-import { SelectDropDown,CustomSelect } from "../SelectDropDown";
-import { useAppDispatch,useAppSelector } from "../../hooks/storeHook";
-import { addEntry } from "../Slices/diaryItemSlice";
+import {CustomSelect } from "../SelectDropDown";
+import { useAppDispatch, useAppSelector } from "../../hooks/storeHook";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import formateDate from "../timeStamp";
-import defaultImg from "../../resource/logo.png"
-import defaultimage1 from "../../resource/default.jpg"
 import defaultimage2 from "../../resource/diary.jpg"
-import DiaryEntry from "../DiaryEntry/DiaryEntry";
-import { URL } from "url";
-import DiaryEntryForm from "../datePicker";
 import moment from "moment";
-type Props = {};
-
-type State = DiaryData & {
-  submitted: boolean
-};
+import { DateComponent } from "../datePicker";
+import { addDoc, collection } from "firebase/firestore";
+import { addEntry } from "../Slices/diaryItemSlice";
 
 const AddDiaryEntry =() =>{
     const { diaryentry } = useAppSelector((state)=>state.diaryEntry)
+    const dispatch = useAppDispatch()
     const navigate = useNavigate()
     const [state, setState] = useState({
         category: "",
@@ -33,8 +23,9 @@ const AddDiaryEntry =() =>{
         image:"",
         status: false,
         startDate:"",
-        endDate:'',
+        endDate:'' ,
         timeStamps:'',
+        firebaseUser:fireauth.currentUser,
         submitted: false,
     })
     const allInputs = {imgUrl: ''}
@@ -42,16 +33,14 @@ const AddDiaryEntry =() =>{
     const [defImage, setdefImage] = useState(defaultimage2)
     const [imageAsUrl, setImageAsUrl] = useState(allInputs)
     const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
-    const [selectedOption, setSelectedOption] = useState<DiaryData | null>(null);
   const CATEGORIES = ["Food", "Laundry", "Agriculture"] ;
   type Fruit = typeof CATEGORIES[number];
   const [selected, setSelected] = useState<Fruit>(CATEGORIES[0]);
   
 
   //states for timestamp
-   const [initDate, setInitDate] = useState<moment.Moment | null>(null);
-    const [dateEnd, setDateEnd] = useState<moment.Moment | null>(null);
-    const [dateInput, setDateInput] = useState<"startDate" | "endDate" | null>(null);
+  const [startDate,setStartDate] = useState<moment.Moment | null>(null);
+  const [endDate,setEndDate] = useState<moment.Moment | null>(null);
 
   const SelectCategory = () => {
     return (
@@ -86,7 +75,7 @@ const AddDiaryEntry =() =>{
         }));
       }
 
-      const handleImageAsFile  = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const handleImageAsFile  =  async (event: React.ChangeEvent<HTMLInputElement>) => {
         const file = event.target.files?.[0];
         setImageAsFile(file)
         if (file) {
@@ -98,88 +87,74 @@ const AddDiaryEntry =() =>{
         }
       };
 
-      const handleFireBaseUpload = (e:any) =>{
+      const handleFireBaseUpload = async (e:any) =>{
         e.preventDefault();
         setState((prev) =>({
           ...prev,category: selected
         }))
 
-        if (!imageAsFile) {
+        try{ 
+
+          if (!imageAsFile) {
             const data = {
               category:state.category,
               description:state.description,
               image: defImage,
               status:state.status,
-              startDate:initDate?.format('ll'),
-              endDate:dateEnd?.format('ll'),
+              startDate:startDate?.format('ll'),
+              endDate:endDate?.format('ll'),
+              firebaseUser:fireauth.currentUser?.uid,
               timeStamps:formateDate()
-            }
-            DiaryServices.create(data)
-            .then(() =>{
-              setImageAsUrl((prev) =>({...prev,imgUrl:defImage}));
-              setState((prevState)=>({
-                  ...prevState,submitted:true
-              })) 
-              console.log(`The status of the entry  ${state.status}`);
-              
-          })
+            }            
+
+            console.log(`I am loging the value to ${JSON.stringify(data)}`);
+      
               setImageAsUrl((prevObject)=>({...prevObject,imgUrl:defImage}))
+
+              const docRef = await addDoc(collection(firedb, "webdiary"), {
+                diaryEntry: data,    
+              });
+              console.log("Document written with ID: ", docRef.id );
               navigate("/dash")
 
           }
-          
+
           else{
-            const uploadEntry = storage.ref(`/images/${imageAsFile.name}`).put(imageAsFile);
-            uploadEntry.on(
-                'state_changed',
-                (snapShot: any) => {
-                    console.log(snapShot);
-                    
-                },
-                (err: any) =>{
-                    console.log(`The error ${err}`)
-                },
-                () =>{
-                    storage
-                    .ref('images')
-                    .child(imageAsFile.name)
-                    .getDownloadURL()
-                    .then((firebaseURL: any) =>{
-                      const data = {
-                        category:state.category,
-                        description:state.description,
-                        image: firebaseURL,
-                        status:state.status,
-                        startDate:initDate?.format('ll'),
-                        endDate:dateEnd?.format('ll'),
-                        timeStamps:formateDate()
-                      }
-                      DiaryServices.create(data)
-                      .then(() =>{
-                        setImageAsUrl((prev) =>({...prev,imgUrl:firebaseURL}));
-                        setState((prevState)=>({
-                            ...prevState,submitted:true
-                        })) 
-                       
-    
-                          
-                        console.log(`The status of the entry  ${state.startDate} and the endDate ${state.endDate}`);
-                        
-                    })
-                        setImageAsUrl((prevObject)=>({...prevObject,imgUrl:firebaseURL}))
-                        navigate("/dash")
-    
-                    })
-                    
-                    .catch((e: Error) => {
-                        console.log(e);
-                      });
-                }
-                
-            );
+            const fileRef = ref(storageRef, `images/${imageAsFile.name}`);
+            const uploadTask = uploadBytesResumable(fileRef, imageAsFile);            
+            uploadTask.on("state_changed", (snapshot) => {
+              console.log(snapshot);
+              
+            }, (error) => {
+              console.log(error);
+              
+            }, async () => {
+              const downloadURL = await getDownloadURL(fileRef);
+            
+              setImageAsUrl((prevObject) => ({ ...prevObject, imgUrl: downloadURL }));
+              const docRef = await addDoc(collection(firedb, "webdiary"), {
+                category: state.category,
+                description: state.description,
+                image: downloadURL,
+                status: state.status,
+                startDate: startDate?.format("ll"),
+                endDate: endDate?.format("ll"),
+                firebaseUser: fireauth.currentUser?.uid,
+                timeStamps: formateDate(),
+              });
+              
+              console.log (`${docRef.id}`);
+              // dispatch(addEntry(data))
+              navigate("/dash");
+            });
             
           }
-       
+
+        }catch(e){
+          console.log(e);
+          
+        }
+ 
       };
 
       const clearField = () =>{
@@ -191,15 +166,13 @@ const AddDiaryEntry =() =>{
             timeStamps:'',
             startDate:'',
             endDate:'',
+            firebaseUser:null,
             submitted: false,
         })
     }
 
    
-    useEffect(()=>{
-      console.log(`${typeof defaultimage1}`);
-      
-    })
+   
 
     return (
         <div className='new-entry'>
@@ -255,15 +228,17 @@ const AddDiaryEntry =() =>{
          </div>
           </div>
         
-         <DiaryEntryForm setDateEnd={setDateEnd} setDateInput={setDateInput} setInitDate={setInitDate} dateEnd={dateEnd} initDate={initDate} dateInput={dateInput} moments={moment()}/>
-          <div className='entry-status'>
+
+          <div className='w-full'>
+            <DateComponent startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} moments={moment()}/>
+          </div>          <div className='entry-status'>
             <input
              name='entryStatus'
               type="Checkbox"
                className='radio'
                 checked={state.status}
                  onChange={handleCheckboxChange} />
-            <span>Check to confirm if you want to continue</span>
+            <span>Check to Publish as Public</span>
           </div>
           <div  className='facebook-main mx-0 my-0 '>
             <button onClick={handleFireBaseUpload}  className=' text-xl text-white'>Save</button>

@@ -1,5 +1,6 @@
 import moment from "moment";
 import DiaryData from "../types/diaryentry.type";
+import { fireauth } from "../../firebase";
 const entries = (): IterableIterator<[number, DiaryData]> => {
   const data: DiaryData[] = [
     {
@@ -7,8 +8,9 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: false,
-      startDate:'',
-      endDate:'',
+      startDate:'' ,
+      endDate:'' ,
+      firebaseUser:fireauth.currentUser?.uid,
       timeStamps:''
     },
     {
@@ -16,8 +18,9 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: true,
-      startDate:'',
-      endDate:'',
+      startDate:'' ,
+      endDate:'' ,
+      firebaseUser:fireauth.currentUser?.uid,
       timeStamps:''
 
     },
@@ -26,8 +29,9 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: false,
-      startDate:'',
-      endDate:'',
+      startDate:'' ,
+      endDate:'' ,
+      firebaseUser:fireauth.currentUser?.uid,
       timeStamps:''
 
     },
@@ -36,8 +40,9 @@ const entries = (): IterableIterator<[number, DiaryData]> => {
       description: 'Blender',
       image: '',
       status: true,
-      startDate:'',
-      endDate:'',
+      startDate:'' ,
+      endDate:'' ,
+      firebaseUser:fireauth.currentUser?.uid,
       timeStamps:''
 
     },

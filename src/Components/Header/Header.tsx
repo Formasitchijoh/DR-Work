@@ -39,7 +39,7 @@ const Header = () => {
                   />
                 ) : (
                   <div className="w-24 h-24 mb-3 text-4xl font-bold grid place-content-center bg-green-200 rounded-full shadow-lg">
-                    {user?.email[0].toUpperCase()}
+                    { user.email && user?.email[0].toUpperCase()}
                   </div>
                 )}
               </Link>

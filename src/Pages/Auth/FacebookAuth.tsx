@@ -1,15 +1,13 @@
 import React,{useEffect} from 'react'
-import { fireauth } from '../../firebase'
+import { fireauth,firedb } from '../../firebase'
 import { useAppSelector,useAppDispatch } from '../../hooks/storeHook'
 import { useDispatch } from 'react-redux'
 import { login } from '../../Components/Slices/authSlice'
 import { User } from '../../Models/User'
 import { AuthState } from '../../Components/Slices/authSlice'
-// import { signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { useNavigate } from 'react-router-dom'
-// import { fetchSignInMethodsForEmail } from 'firebase/auth'
-import firebase from '../../firebase'
-
+import { collection, addDoc } from "firebase/firestore";
+import { FacebookAuthProvider, getAuth, fetchSignInMethodsForEmail, signInWithPopup, getRedirectResult } from "firebase/auth";
 const FacebookAuth = () => {
   const user = useAppSelector(state=>state.auth.user);
   const dispatch = useDispatch()
@@ -29,12 +27,12 @@ const FacebookAuth = () => {
 },[user,navigate]);
 
 const signInWithFacebook = async (): Promise<void> => {
-  const provider = new firebase.auth.FacebookAuthProvider()
+  const provider =  new FacebookAuthProvider()
   provider.addScope('email');
   provider.addScope('public_profile');
 
   try {
-    const result = await fireauth.signInWithPopup(provider);
+    const result = await signInWithPopup(fireauth, provider);
     const user = result.user;
     if(!user)return
 
@@ -42,10 +40,9 @@ const signInWithFacebook = async (): Promise<void> => {
     const id: string = user.uid;
     const picture: string | null = user.photoURL;
 
-    console.log(email, id, picture);
 
     // Check if the email address is associated with an existing account
-    const signInMethods: string[] = await fireauth.fetchSignInMethodsForEmail( email ?? "");
+    const signInMethods: string[] = await fetchSignInMethodsForEmail( fireauth, email ?? "");
     
     if (signInMethods.length === 0) {
       // This is a new account, so create a new user record
@@ -75,10 +72,9 @@ const signInWithFacebook = async (): Promise<void> => {
   
   // After the user is redirected back to your app, you can retrieve the user's information using the following code:
   
- fireauth.getRedirectResult()
+ getRedirectResult(fireauth)
     .then((result) => {
       const user = result?.user;
-      console.log(`userrrrrrr ${user}`);
     })
     .catch((error) => {
       console.log(error.message);

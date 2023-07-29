@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer components {
     .main {
-        @apply xl:max-w-2xl max-w-sm xl:w-[100vw] m-auto  min-h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
+        @apply  xl:max-w-2xl max-w-sm xl:w-[100vw] m-auto  min-h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
     }
 
     .header {
@@ -14,7 +15,7 @@
         @apply w-10 h-full gap-16 
     } 
     .micro{
-        @apply w-10  h-full mt-2
+        @apply w-10  h-full mt-2 
     }
     .micro-img {
         @apply w-3/4 my-1  max-h-full

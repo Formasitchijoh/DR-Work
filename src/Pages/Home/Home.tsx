@@ -19,10 +19,4 @@ const Home = () => {
 };
 
 export default Home;
-  
-  // <div className={container}>
-  //       <div className={cardContainer}>
-  //         <h5 className={title}>Firebase Auth</h5>
-  //         <p className={description}>Master complete auth in firebase</p>
-  //       </div>
-  //     </div>  
+    
