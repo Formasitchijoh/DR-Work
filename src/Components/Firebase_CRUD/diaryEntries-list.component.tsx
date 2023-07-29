@@ -5,7 +5,6 @@ import firebase from "../../firebase";
 import DiaryServices from "../services/diaentry.service";
 import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
-import { SelectDropDown,CustomSelect } from "../SelectDropDown";
 import { useAppDispatch,useAppSelector } from "../../hooks/storeHook";
 import { addEntry } from "../Slices/diaryItemSlice";
 import DiaryEntrys from "./diaryEntry.component";
@@ -42,6 +41,8 @@ const EntryList = () => {
             description: data.description,
             image: data.image,
             status: data.status,
+            startDate:data.startDate,
+            endDate:data.endDate,
             timeStamps:data.timeStamps
           });
         });
@@ -71,11 +72,6 @@ const EntryList = () => {
           });
       };
       const { diaryEntry, currentEntry, currentIndex } = state;
-
-
-       
-      
-
   return (
    
     <div className="flex-col gap-10">

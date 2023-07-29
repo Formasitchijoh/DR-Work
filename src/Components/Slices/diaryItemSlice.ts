@@ -19,10 +19,7 @@ export const diaryEntrySlice = createSlice({
     initialState,
     reducers : {
         addEntry : (state, action: PayloadAction<DiaryData[]>) =>{
-                state.diaryentry = action.payload;
-                
-
-                
+                state.diaryentry = action.payload;                
         },
         
     },

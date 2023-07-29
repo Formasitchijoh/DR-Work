@@ -7,6 +7,7 @@ import { addEntry } from '../../Components/Slices/diaryItemSlice'
 import { fireauth,firedb } from '../../firebase'
 import { SelectDropDown,CustomSelect } from '../../Components/SelectDropDown'
 import DiaryData from '../../Components/types/diaryentry.type'
+import moment from 'moment'
 const AddDiaryItem = () => {
 
   const { diaryentry} = useAppSelector((state)=>state.diaryEntry);
@@ -19,6 +20,8 @@ const AddDiaryItem = () => {
     description: '',
     image: "",
     status: false,
+    startDate:'',
+    endDate:'',
     timeStamps:''
   });
   const [selectedOption, setSelectedOption] = useState<DiaryData | null>(null);

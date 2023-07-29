@@ -14,7 +14,10 @@ import formateDate from "../timeStamp";
 import defaultImg from "../../resource/logo.png"
 import defaultimage1 from "../../resource/default.jpg"
 import defaultimage2 from "../../resource/diary.jpg"
+import DiaryEntry from "../DiaryEntry/DiaryEntry";
 import { URL } from "url";
+import DiaryEntryForm from "../datePicker";
+import moment from "moment";
 type Props = {};
 
 type State = DiaryData & {
@@ -29,6 +32,8 @@ const AddDiaryEntry =() =>{
         description: "",
         image:"",
         status: false,
+        startDate:"",
+        endDate:'',
         timeStamps:'',
         submitted: false,
     })
@@ -42,6 +47,12 @@ const AddDiaryEntry =() =>{
   type Fruit = typeof CATEGORIES[number];
   const [selected, setSelected] = useState<Fruit>(CATEGORIES[0]);
   
+
+  //states for timestamp
+   const [initDate, setInitDate] = useState<moment.Moment | null>(null);
+    const [dateEnd, setDateEnd] = useState<moment.Moment | null>(null);
+    const [dateInput, setDateInput] = useState<"startDate" | "endDate" | null>(null);
+
   const SelectCategory = () => {
     return (
       <div className="w-12/12 mr-3 ">
@@ -94,12 +105,13 @@ const AddDiaryEntry =() =>{
         }))
 
         if (!imageAsFile) {
-            // console.error(`not an image, the image file is a ${typeof (imageAsFile)}`);
             const data = {
               category:state.category,
               description:state.description,
               image: defImage,
               status:state.status,
+              startDate:initDate?.format('ll'),
+              endDate:dateEnd?.format('ll'),
               timeStamps:formateDate()
             }
             DiaryServices.create(data)
@@ -108,9 +120,6 @@ const AddDiaryEntry =() =>{
               setState((prevState)=>({
                   ...prevState,submitted:true
               })) 
-             
-
-                
               console.log(`The status of the entry  ${state.status}`);
               
           })
@@ -141,6 +150,8 @@ const AddDiaryEntry =() =>{
                         description:state.description,
                         image: firebaseURL,
                         status:state.status,
+                        startDate:initDate?.format('ll'),
+                        endDate:dateEnd?.format('ll'),
                         timeStamps:formateDate()
                       }
                       DiaryServices.create(data)
@@ -152,7 +163,7 @@ const AddDiaryEntry =() =>{
                        
     
                           
-                        console.log(`The status of the entry  ${state.status}`);
+                        console.log(`The status of the entry  ${state.startDate} and the endDate ${state.endDate}`);
                         
                     })
                         setImageAsUrl((prevObject)=>({...prevObject,imgUrl:firebaseURL}))
@@ -178,6 +189,8 @@ const AddDiaryEntry =() =>{
             image:'',
             status: false,
             timeStamps:'',
+            startDate:'',
+            endDate:'',
             submitted: false,
         })
     }
@@ -228,8 +241,9 @@ const AddDiaryEntry =() =>{
               placeholder='Enter description here'
                className='text-area align-top border-2 border-gray-500 rounded-sm '/>
           </div>
-         <div className="w-12/12 ml-1  bg-gray-50 p-10 border-2 border-gray-500 rounded-sm">
-         <span className='text'>Upload image(Optional)</span>
+          <div  className="w-12/12 ml- ">
+          <span className='text'>Upload image(Optional)</span>
+          <div className=" w-12/12 ml-1  bg-gray-50 p-10 border-2  border-gray-500 rounded-sm">
           {
             !displayImage ? ( <input
               type="file"
@@ -239,6 +253,9 @@ const AddDiaryEntry =() =>{
                 <img src={displayImage} alt=""/>
                </div>} 
          </div>
+          </div>
+        
+         <DiaryEntryForm setDateEnd={setDateEnd} setDateInput={setDateInput} setInitDate={setInitDate} dateEnd={dateEnd} initDate={initDate} dateInput={dateInput} moments={moment()}/>
           <div className='entry-status'>
             <input
              name='entryStatus'
