@@ -7,56 +7,57 @@ import { firedb,fireauth } from '../../firebase'
 import { login } from '../../Components/Slices/authSlice'
 import FacebookAuth from '../Auth/FacebookAuth'
 import Footer from '../../Components/Footer/Footer'
-import firebase from '../../firebase'
+import Cookies from 'js-cookie'
+import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 const Login = () => {
 
     const {user} = useAppSelector((state)=>state.auth)
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
-
     const [userName, setUserName] = useState<string>('initialname');
 
+
     useEffect(()=>{
-        if(user){
-             navigate("/dash")
-        }
 
-    },[user,navigate])
-    const signInWithGoogle = async ()=>{
+      if(user){
+        navigate("/dash")
+      }
+    },[user])
 
-        try{
-            const provider = new firebase.auth.GoogleAuthProvider();
-            const {user} =  await fireauth.signInWithPopup(provider);
-            if(user && user.email){
-                dispatch(
-                login({
-                    email:user.email,
-                    id:user.uid,
-                    photoUrl:user.photoURL || null
-                }) )
-                
-                if (user.displayName === null) {
-                    setUserName("");
-                  } else {
-                    setUserName(user.displayName);
 
-                  }
+const signInWithGoogle = async ()=>{
+  try{
+      const provider = new GoogleAuthProvider();
+      const {user} =  await signInWithPopup(fireauth, provider);
+      if(user && user.email){
+          dispatch(
+          login({
+              email:user.email,
+              id:user.uid,
+              photoUrl:user.photoURL || null
+          }) )
+
+          Cookies.set('user', JSON.stringify({
+            email: user.email,
+            id: user.uid,
+            photoUrl: user.photoURL || null,
+            displayName: user.displayName
+          }) , {expires: 1});
+
+        
+          
+          if (user.displayName === null) {
+              setUserName("");
+            } else {
+              setUserName(user.displayName);
             }
-            navigate("/dash")  
-
-            console.log(`loggin the user ${user?.displayName} and ${userName}`);
-            
-           
-    
-        }catch(error){
-            console.log(`Error Signing in ${error}`);
-            
-        }
-
-    }
-
+      }
+     
+      navigate("/dash")  
+      
+  }catch(error){
+      console.log(`Error Signing in ${error}`);}}
    
-
    
   return ( 
     <div className='main'>
@@ -75,10 +76,6 @@ const Login = () => {
              <div  onClick={signInWithGoogle} className='facebook-main '>
                 <button className=' text-xl text-white'>Sign in with Google</button>
              </div>
-             
-             {/* <div className='m-auto bg-black text-white hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center'>
-                <button className='text-lg font-sans '>Sign in with FaceBook</button>
-             </div> */}
              <div className='facebook-main'>
                 <FacebookAuth/>
              </div>

@@ -1,11 +1,8 @@
 import React,{useState,ChangeEvent,useEffect} from "react";
 import DiaryData from "../types/diaryentry.type";
-import { storage } from "../../firebase";
-import firebase from "../../firebase";
-import DiaryServices from "../services/diaentry.service";
+import { fireauth,storageRef } from "../../firebase";
 import Footer from "../Footer/Footer";
 import Header from "../Header/Header";
-import { SelectDropDown,CustomSelect } from "../SelectDropDown";
 import { useAppDispatch,useAppSelector } from "../../hooks/storeHook";
 import { addEntry } from "../Slices/diaryItemSlice";
 import DiaryEntrys from "./diaryEntry.component";
@@ -42,18 +39,21 @@ const EntryList = () => {
             description: data.description,
             image: data.image,
             status: data.status,
+            startDate:data.startDate,
+            endDate:data.endDate,
+            firebaseUser:fireauth.currentUser?.uid,
             timeStamps:data.timeStamps
           });
         });
         setState(prevState => ({...prevState, diaryEntry: diaryentrys}));
        
       };
-      useEffect(() => {
-        DiaryServices.getAll().on("value", onDataChange);
-        return () => {
-         DiaryServices.getAll().off("value", onDataChange);
-        }
-      });
+      // useEffect(() => {
+      //   DiaryServices.getAll().on("value", onDataChange);
+      //   return () => {
+      //    DiaryServices.getAll().off("value", onDataChange);
+      //   }
+      // });
 
       const refreshList = () => {
         setState(prevState => ({...prevState, currentEntry: null, currentIndex: -1}));
@@ -61,21 +61,16 @@ const EntryList = () => {
       const setActiveDiaryEntry = (diaryEntry: DiaryData, index: number) => {
         setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
       };
-      const removeAllEntries = () => {
-       DiaryServices.deleteAll()
-          .then(() => {
-            refreshList();
-          })
-          .catch((e: Error) => {
-            console.log(e);
-          });
-      };
+      // const removeAllEntries = () => {
+      //  DiaryServices.deleteAll()
+      //     .then(() => {
+      //       refreshList();
+      //     })
+      //     .catch((e: Error) => {
+      //       console.log(e);
+      //     });
+      // };
       const { diaryEntry, currentEntry, currentIndex } = state;
-
-
-       
-      
-
   return (
    
     <div className="flex-col gap-10">
@@ -98,13 +93,12 @@ const EntryList = () => {
         </ul>
         <button
           className="m-3 bg-blue-900 text-white text-xl p-5"
-          onClick={removeAllEntries}
         >
           Remove All
         </button>
       </div>
       <div className="col-md-6">
-        {currentEntry ? (
+        {/* {currentEntry ? (
           <DiaryEntrys
             diaryEntry={currentEntry}
             refreshList={refreshList}
@@ -114,7 +108,7 @@ const EntryList = () => {
             <br />
             <p>Please click on a Tutorial...</p>
           </div>
-        )}
+        )} */}
       </div>
     </div>
   )

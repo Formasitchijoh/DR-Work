@@ -2,9 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+
 @layer components {
     .main {
-        @apply max-w-sm xl:w-[100vw] m-auto  min-h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
+        @apply  xl:max-w-screen-xl max-w-sm xl:w-[100vw] m-auto  min-h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
     }
 
     .header {
@@ -14,7 +15,7 @@
         @apply w-10 h-full gap-16 
     } 
     .micro{
-        @apply w-10  h-full mt-2
+        @apply w-10  h-full mt-2 
     }
     .micro-img {
         @apply w-3/4 my-1  max-h-full
@@ -119,38 +120,38 @@
 
 }
 .new-entry{
-    @apply max-w-sm xl:w-[100vw] m-auto  h-[100vh] flex-col justify-start  items-center border-2 border-gray-100 px-0 rounded-lg
+    @apply w-11/12 max-w-screen-sm xl:border-2 xl:py-5 xl:px-5 xl:border-gray-100 xl:rounded-sm xl:mt-10 xl:w-[100vw] m-auto  h-[100vh] flex-col justify-start  items-center   px-0 
 }
 .create-new{
-    @apply w-full h-20 flex justify-start items-center
+    @apply  h-20 flex justify-start items-center
 }
 .create-text{
-    @apply font-bold font-sans text-xl text-gray-900 w-3/4 ml-2
+    @apply font-bold font-sans text-2xl text-gray-900 w-3/4 ml-2
 }
 .close{
     @apply  w-1/4 ml-5 block 
 }
 
 .x{
-    @apply font-sans text-xl font-bold  h-full 
+    @apply font-sans text-2xl font-bold  h-full 
 }
 .category{
-    @apply w-full h-20  m-auto  flex flex-col mx-1  mb-2
+    @apply w-full mr-10 h-20  flex flex-col  mb-2 
 }
 .text{
-    @apply font-sans text-xl text-gray-900 mb-1
+    @apply from-neutral-600 text-xl text-gray-900 mb-1 font-semibold
 }
 .select{
     @apply w-full  h-10 bg-gray-100  rounded-lg px-5 focus:pointer-events-none
 }
 .descript{
-    @apply w-full  flex flex-col  p-1 mb-5
+    @apply w-full  flex flex-col  p-1 mb-2 max-h-[20vh] 
 }
 .text-area{
     @apply w-full h-20 border-gray-100  border-2  resize-none align-top
 }
 .image-container{
-    @apply w-full  flex flex-col  p-1
+    @apply w-full max-h-[30vh] bg-red-500 flex flex-col  p-1
 }
 .image{
      @apply w-full h-28 border-gray-700  border-2 
@@ -160,7 +161,7 @@
     @apply w-full h-20 flex justify-start items-center gap-2
 }
 .radio{
-    @apply w-5 h-5 border-gray-500 
+    @apply w-5 h-5 border-gray-900  
 }
 }
 

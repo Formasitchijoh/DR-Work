@@ -7,10 +7,10 @@ import { addEntry } from '../../Components/Slices/diaryItemSlice'
 import { fireauth,firedb } from '../../firebase'
 import { SelectDropDown,CustomSelect } from '../../Components/SelectDropDown'
 import DiaryData from '../../Components/types/diaryentry.type'
+import moment from 'moment'
 const AddDiaryItem = () => {
 
   const { diaryentry} = useAppSelector((state)=>state.diaryEntry);
-  console.log(JSON.stringify(diaryentry));
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   
@@ -19,6 +19,9 @@ const AddDiaryItem = () => {
     description: '',
     image: "",
     status: false,
+    startDate:'',
+    endDate:'',
+    firebaseUser:fireauth.currentUser?.uid,
     timeStamps:''
   });
   const [selectedOption, setSelectedOption] = useState<DiaryData | null>(null);
@@ -35,9 +38,7 @@ const AddDiaryItem = () => {
     );
   };
 
-  const handleChange = (option: DiaryData | null) => {
-    setSelectedOption(option );
-  };
+  
   useEffect(()=>{
     if(Boolean(diaryentry)){
       navigate("/dash")
@@ -95,12 +96,6 @@ const onSubmitHandle = (e:any) =>{
         <div className='h-1/4 w-full'>
             <SelectCategory/>
         </div>
-        {/* <input
-         name='category'
-         onChange={handleEntry}
-          type="select"
-           placeholder='Category'
-            className='select'/> */}
       </div>
 
       <div className='descript '>
@@ -136,7 +131,7 @@ const onSubmitHandle = (e:any) =>{
         <span>Check to confirm if you want to continue</span>
       </div>
       <div  className='facebook-main '>
-        <button  className=' text-xl text-white'>Sign in with Google</button>
+        <button  className=' text-xl text-white'>Save</button>
         </div>
       </form>
      
