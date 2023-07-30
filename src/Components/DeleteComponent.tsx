@@ -9,32 +9,44 @@ import { useNavigate } from 'react-router-dom';
 import { resetEntry } from './Slices/currentEntrySlice';
 type props = {
     currentDiaryEntry: any,
+    setisdelete:React.Dispatch<React.SetStateAction<boolean>>
   };
 
   
-const DeleteComponent:React.FC<props> = ({currentDiaryEntry}) => { 
+const DeleteComponent:React.FC<props> = ({currentDiaryEntry,setisdelete}) => { 
         const { diaryentry } = useAppSelector((state) =>state.diaryEntry)
+        const { currententry} = useAppSelector(state => state.currentEntry)
         const dispatch = useAppDispatch()
         const navigate = useNavigate()
 
-     const handleDelete = async () => {
-        if (currentDiaryEntry) {
+  
+
+      const handleDelete = async () => {
+        const docRef = currententry?.key ? doc(firedb, 'webdiary', currententry.key) : undefined;
+        if (docRef) { 
           try {
-            await deleteDoc(doc(firedb, "webdiary", currentDiaryEntry.key));
-            const downloadURL = await getDownloadURL(currentDiaryEntry.image);
-            if(!downloadURL) console.log(`eeeeeeeeeee `);
-            const imageRef = ref(storageRef, currentDiaryEntry.image);
-            await deleteObject(imageRef);
+            await deleteDoc(docRef);
+            const imgRef = currententry && currententry.image ? ref(storageRef, currententry.image) : undefined;
+            if (imgRef) {
+              await deleteObject(imgRef);
+            }
             const entries = diaryentry.filter(entry => entry.key !== currentDiaryEntry.key);
-
-            dispatch(addEntry(entries))
-
-            dispatch(resetEntry())
+            alert("done")
+            dispatch(addEntry(entries));
+            dispatch(resetEntry());
+            setisdelete(false)
+            navigate("/dash")
           } catch (error) {
             console.error("Error deleting diary entry:", error);
           }
         }
       };
+
+      const cancelDelete = () =>{
+        setisdelete(false)
+        navigate("/dash")
+
+      }
 
      
     
@@ -57,7 +69,7 @@ const DeleteComponent:React.FC<props> = ({currentDiaryEntry}) => {
             <span>Are you sure you want to delete this diary entry?</span>
             </div>
             <div className='flex justify-around items-center  '>
-                <button className='font-sans rounded-lg text-xl text-white my-5 bg-black w-1/4 h-10'>No</button>
+                <button onClick={cancelDelete} className='font-sans rounded-lg text-xl text-white my-5 bg-black w-1/4 h-10'>No</button>
                 <button onClick={handleDelete}  className='font-sans rounded-lg text-xl text-orange-700   bg-white border-2 border-orange-700 w-1/4 h-10'>Yes</button>
 
             </div>
