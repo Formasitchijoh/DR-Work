@@ -4,7 +4,7 @@ type Allowed = string | number;
 
 type BaseProps<Value> = {
   value: Value;
-  onChange: (newValue: Value) => void;
+  onChange: (newValue: Value) => void; 
   options: readonly Value[];
   mapOptionToLabel?: (option: Value) => Allowed;
   mapOptionToValue?: (option: Value) => Allowed;
@@ -20,7 +20,8 @@ export function CustomSelect<Value>({
   options,
   mapOptionToLabel,
   mapOptionToValue,
-}: Props<Value>) {
+}: Props<Value>) { 
+  //for every value given to the tolabel function it passes it to mapOptiontoLabel and returns Allowed which is of type string or numner
   const toLabel = (option: Value): Allowed => {
     if (mapOptionToLabel) {
       return mapOptionToLabel(option);

@@ -1,4 +1,3 @@
-import moment from "moment"
 
 export default interface DiaryData{
     key?: string | null | undefined,
@@ -8,6 +7,7 @@ export default interface DiaryData{
     status?: boolean,
     startDate:string | undefined,
     endDate:string | undefined,
+    firebaseUser:string | undefined,
     timeStamps: string
 
 }

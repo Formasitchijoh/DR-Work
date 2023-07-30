@@ -5,10 +5,12 @@ import { User } from "../../Models/User";
 
 export interface AuthState {
   user: null | User;
+  loading:boolean
 }
 
 const initialState: AuthState = {
   user: null,
+  loading:false
 };
 
 export const authSlice = createSlice({

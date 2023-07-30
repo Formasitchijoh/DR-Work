@@ -8,6 +8,7 @@ import AddDiaryItem from './Pages/AddDiaryItem/AddDiaryItem';
 import AddEntry from './Components/Firebase_CRUD/addDiaryEntry.component';
 import DiaryEntrys from './Components/Firebase_CRUD/diaryEntry.component';
 import EntryList from './Components/Firebase_CRUD/diaryEntries-list.component';
+import DiaryEntryComponent from './Components/Firebase_CRUD/diaryEntry.component';
 interface Props {
   name: string;
 }
@@ -18,10 +19,8 @@ function App() {
         <Routes>
             <Route path='/' element={<Home/>}/>
             <Route path='/dash' element={<DashBoard/>}/>
-            <Route path='/new-diary' element={<AddEntry/>}/>
             <Route path='/add' element={<AddEntry/>}/>
-            <Route path='/list' element={<EntryList/>}/>
-            {/* <Route path='/dias' element={<DiaryEntrys/>}/> */}
+            <Route path='/entry' element={<DiaryEntryComponent/>}/>
 
         </Routes>
        

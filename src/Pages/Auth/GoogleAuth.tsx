@@ -1,10 +1,11 @@
 import React,{useEffect,useState} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAppDispatch,useAppSelector } from '../../hooks/storeHook'
-import { fireauth,firedb } from '../../firebase'
 import { login } from '../../Components/Slices/authSlice'
 import { authClasses } from './authClasses'
-import firebase from '../../firebase'
+import { fireauth } from '../../firebase'
+import { GoogleAuthProvider,getAuth, signInWithPopup, ​​} from "firebase/auth";
+​​import { getFirestore,query,getDocs,collection,where,addDoc, } from "firebase/firestore";
 
 const GoogleAuth = () => {
 
@@ -19,11 +20,11 @@ const GoogleAuth = () => {
     },[user,navigate]);
 
     const signInWithGoogle = async () =>{
-        const provider = new firebase.auth.GoogleAuthProvider();
+        const provider =  new GoogleAuthProvider();
 
         try{
          
-            const {user} = await fireauth.signInWithPopup( provider);
+            const {user} = await signInWithPopup(fireauth, provider);
 
             if(user && user.email)
             dispatch(
