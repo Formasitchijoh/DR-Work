@@ -23,8 +23,6 @@ const Header = () => {
             id: user.uid,
             photoUrl: user.photoURL || null
           }));
-
-          console.log(`the headache user is ${JSON.stringify(user)}`);
           
         } else {
           // user is signed out
