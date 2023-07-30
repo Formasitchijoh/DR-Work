@@ -53,6 +53,7 @@ const DashBoard = ()=>{
   const [isLoggedIn, setIsLoggedIn] = useState(loginSuccessModalDisplayed === 'false');
     const [isdisplay, setisDisplay] = useState(false) //conditionally display search or entire result
 
+    const [loading, setLoading] = useState(true);
 
     //states for closing diary component, and warning modal
     const [closeconfirm, setcloseconfirm] = useState(false)
@@ -145,9 +146,16 @@ useEffect(()=>{
     addEntry(diaryEntry))  
 },[diaryEntry,dispatch])
 
-useEffect(()=>{
 
-})
+  useEffect(() => {
+    // Simulate data loading delay for demonstration purposes
+    // const timer = setTimeout(() => {
+    //   setLoading(false);
+    // }, 3000);
+    setLoading(false);
+
+    // return () => clearTimeout(timer);
+  }, [diaryentry]);
 
     return (
       <>
@@ -169,7 +177,7 @@ useEffect(()=>{
          <div className="w-full ">
          <SearchFilter diaryEntry={diaryentry} setdisplayAll={setisDisplay}/>
          </div>
-           {/* {isloading && <Loader size={100} color="#000" />} */}
+         {loading && <Loader/>}
 
               <ul >
                 

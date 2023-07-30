@@ -7,14 +7,17 @@ import { SelectDropDown,CustomSelect } from "../SelectDropDown";
 import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
 import DeleteComponent from '../DeleteComponent'
-import { useAppSelector } from '../../hooks/storeHook'
-import { updateDoc, doc } from 'firebase/firestore'
-import { firedb } from '../../firebase'
+import { useAppSelector,useAppDispatch } from '../../hooks/storeHook'
+import { updateDoc, doc,setDoc, getDoc } from 'firebase/firestore'
 import Header from '../Header/Header-Component'
+import { firedb } from '../../firebase'
+import { selectedEntry } from '../Slices/currentEntrySlice'
 const DiaryEntryComponent = () => { 
-  const { currententry,curIndex } = useAppSelector(state => state.currentEntry);
+  const { currententry,curIndex,updateStatus } = useAppSelector(state => state.currentEntry);
   const { diaryentry } = useAppSelector(state =>state.diaryEntry)
   const navigate = useNavigate()
+  const dispatch = useAppDispatch()
+
   const [state, setState] = useState({
     currentDiaryEntry: {
       key: currententry?.key || null,
@@ -33,9 +36,9 @@ const DiaryEntryComponent = () => {
     const CATEGORIES = ["Food", "Laundry", "Agriculture"] ;
     const [selected, setSelected] = useState<Fruit>(CATEGORIES[0]);
     type Fruit = typeof CATEGORIES[number];
-   
-
   const [isdelete, setisDelete] = useState(false)
+const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
+
     const SelectCategory = () => {
       return (
         <>
@@ -56,13 +59,18 @@ const DiaryEntryComponent = () => {
       }
 
       const handleImageChange = (e: ChangeEvent<HTMLInputElement>) =>{
-        const image = e.target.files?.[0];
-        setImageAsFile(image);
-
-        if (!imageAsFile) {
-            console.error(`not an image, the image file is a ${typeof (imageAsFile)}`);
-            return;
-          }
+        const file = e.target.files?.[0];
+        setImageAsFile(file)
+        imageAsFile && console.log("fffffffffffffffff");
+        
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = () => {
+            setdisplayImage(reader.result as string);
+            
+          };
+          reader.readAsDataURL(file);
+        }
 
       };
 
@@ -73,6 +81,60 @@ const DiaryEntryComponent = () => {
               status:isChecked
             }));
           }
+
+
+          const updateEntry = () =>{
+                              // Get a reference to the document you want to update
+            console.log(JSON.stringify(currententry));
+             const docRef = currententry?.key ? doc(firedb, 'webdiary', currententry.key) : undefined;
+              if(docRef){
+                getDoc(docRef)
+              .then((docSnap) => {
+                if (docSnap.exists()) {
+                  const entries = {
+                    key: currententry?.key,
+                    category: currententry?.category ,
+                    description: currententry?.description ,
+                    image: currententry?.image ,
+                    startDate: currententry?.startDate ,
+                    endDate: currententry?.endDate ,
+                    status: !currententry?.status ,
+                  }
+                  updateDoc(docRef, {...entries});
+                  const newEntries = {
+                    currententry:entries as DiaryData,
+                    curIndex:curIndex,
+                    updateStatus:updateStatus
+                    
+                  }
+                  setState((prevState) => ({
+                    currentDiaryEntry: {
+                    ...prevState.currentDiaryEntry,
+                    status:!state.currentDiaryEntry.status,
+                  },
+                  message: prevState.message,
+                }));
+                dispatch(selectedEntry(newEntries))
+                  alert(currententry?.status)
+                  navigate("/dash")
+
+                } else {
+                  throw new Error('Document does not exist!');
+                }
+              })
+              .then(() => {
+                console.log('Document successfully updated!');
+              })
+              .catch((error) => {
+                console.error('Error updating document: ', error);
+              });
+
+              }
+
+              else {
+                console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");  
+              }}
+
           const { currentDiaryEntry } = state;
 
   return (
@@ -93,7 +155,7 @@ const DiaryEntryComponent = () => {
          name='description'
           onChange={handleDescriptionChange} 
           placeholder='Enter description here'
-          value={currentDiaryEntry.description}
+          value={ currentDiaryEntry?.description}
            className='text-area xl:h-[30vh] xl:mb-5'>
         </input>
       </div>
@@ -102,7 +164,7 @@ const DiaryEntryComponent = () => {
            type='file'
            onChange={handleImageChange}/>
         </div>
-      {currentDiaryEntry.image && (<img src={currentDiaryEntry.image} alt=''/>)}
+      { currentDiaryEntry?.image ? (<img src={ currentDiaryEntry.image} alt=''/>):null}
       <>
     </>
       
@@ -111,26 +173,28 @@ const DiaryEntryComponent = () => {
          name='entryStatus'
           type="Checkbox"
            className='radio'
-            checked={state.currentDiaryEntry.status}
+            checked={ currentDiaryEntry?.status}
              onChange={handleCheckboxChange} />
         <span>Check to confirm if you want to continue</span>
       </div>
       </div>
-      {currentDiaryEntry.status
+      { currentDiaryEntry?.status
              ? (
               <button
                 className="inline-block px-2 py-1 text-sm font-semibold text-white bg-blue-500 rounded mr-2"
+                onClick={updateEntry}
               > UnPublish Entry </button>) 
             : (
               <button
                 className="inline-block px-2 py-1 text-sm font-semibold text-white bg-blue-500 rounded mr-2"
+                onClick={updateEntry}
                 >Publish Entry</button>
             )
             }
 
             <button
               className="inline-block px-2 py-1 text-sm font-semibold text-white bg-red-500 rounded mr-2"
-              onClick={()=>navigate("/dash")}
+              onClick={()=>setisDelete(true)}
             >
               Delete
             </button>
@@ -144,7 +208,7 @@ const DiaryEntryComponent = () => {
             <p>{state.message}</p>
 
             {
-              currententry && <DeleteComponent currentDiaryEntry={currententry}  /> 
+              isdelete && <DeleteComponent currentDiaryEntry={currententry}  setisdelete={setisDelete} /> 
             }
 
      
