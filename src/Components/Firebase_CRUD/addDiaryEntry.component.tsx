@@ -13,6 +13,7 @@ import { DateComponent } from "../datePicker";
 import { addDoc, collection } from "firebase/firestore";
 import { addEntry } from "../Slices/diaryItemSlice";
 import Header from "../Header/Header-Component";
+import Loader from "../Loader/loader";
 const AddDiaryEntry =() =>{
     const { diaryentry } = useAppSelector((state)=>state.diaryEntry)
     const dispatch = useAppDispatch()
@@ -38,7 +39,7 @@ const AddDiaryEntry =() =>{
   const [selected, setSelected] = useState<Fruit>(CATEGORIES[0]);
   
   const [defaultImageURL, setDefaultImageURL] = useState<string | null>(null);
-
+  const [isSubmitting, setisSubmitting] = useState(false)
 
   //states for timestamp
   const [startDate,setStartDate] = useState<moment.Moment | null>(null);
@@ -113,10 +114,9 @@ const AddDiaryEntry =() =>{
 
         try{ 
 
-          if (!imageAsFile) {
-                       
-           
-            
+          if (!imageAsFile) { 
+
+            setisSubmitting(true)
               const docRef = await addDoc(collection(firedb, "webdiary"), {
                 category: state.category,
                 description: state.description,
@@ -130,6 +130,7 @@ const AddDiaryEntry =() =>{
               
               console.log (`${docRef.id}`);
               // dispatch(addEntry(data))
+              setisSubmitting(false)
               navigate("/dash");
             
               console.log("Document written with ID: ", docRef.id );
@@ -147,8 +148,8 @@ const AddDiaryEntry =() =>{
               console.log(error);
               
             }, async () => {
+              setisSubmitting(true)
               const downloadURL = await getDownloadURL(fileRef);
-            
               setImageAsUrl((prevObject) => ({ ...prevObject, imgUrl: downloadURL }));
               const docRef = await addDoc(collection(firedb, "webdiary"), {
                 category: state.category,
@@ -163,6 +164,7 @@ const AddDiaryEntry =() =>{
               
               console.log (`${docRef.id}`);
               // dispatch(addEntry(data))
+              setisSubmitting(false)
               navigate("/dash");
             });
             
@@ -196,17 +198,10 @@ const AddDiaryEntry =() =>{
         <>
         <Header/>
         <div className='new-entry'>
-            {state.submitted ? (
-                 <div>
-                 <h4>You submitted successfully!</h4>
-                 <Link to="/list">
-                 <button className="w-20 h-20 bg-teal-100 m-10">List</button>
-                 </Link>
-                 
-                 <button  className="w-20 h-20 bg-teal-100 m-10"  onClick={clearField}>
-                   Add
-                 </button>
-                 <img src={imageAsUrl.imgUrl} alt="tag" />
+            {isSubmitting ? (
+                 <div className="relative inset-20  ">
+                  <span className="text-xl font-sans font-semibold">Sending...</span>
+                  <Loader/>
                </div>
             ):(
                 <div className="w-12/12 mx-3  h-full">
