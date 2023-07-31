@@ -8,10 +8,14 @@ import moment from 'moment'
 import { useNavigate } from 'react-router-dom'
 import DeleteComponent from '../DeleteComponent'
 import { useAppSelector,useAppDispatch } from '../../hooks/storeHook'
-import { updateDoc, doc,setDoc, getDoc } from 'firebase/firestore'
+import { updateDoc,doc,setDoc, getDoc } from 'firebase/firestore'
 import Header from '../Header/Header-Component'
-import { firedb } from '../../firebase'
+import { fireauth, firedb } from '../../firebase'
 import { selectedEntry } from '../Slices/currentEntrySlice'
+import { storageRef } from '../../firebase'
+import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { DateComponent } from '../datePicker'
+import formateDate from '../timeStamp'
 const DiaryEntryComponent = () => { 
   const { currententry,curIndex,updateStatus } = useAppSelector(state => state.currentEntry);
   const { diaryentry } = useAppSelector(state =>state.diaryEntry)
@@ -38,6 +42,11 @@ const DiaryEntryComponent = () => {
     type Fruit = typeof CATEGORIES[number];
   const [isdelete, setisDelete] = useState(false)
 const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
+
+//states for timestamp
+const [startDate,setStartDate] = useState<moment.Moment | null>(null);
+const [endDate,setEndDate] = useState<moment.Moment | null>(null);
+
 
     const SelectCategory = () => {
       return (
@@ -67,12 +76,76 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
           const reader = new FileReader();
           reader.onload = () => {
             setdisplayImage(reader.result as string);
-            
           };
           reader.readAsDataURL(file);
         }
 
       };
+
+      const uploadEntries = async () => {
+        try {
+          const imageRef = ref(storageRef, `images/${imageAsFile?.name}`);
+          if (!imageAsFile) {
+            return;
+          }
+      
+          const snapshot = await uploadBytesResumable(imageRef, imageAsFile);
+          const downloadURL = await getDownloadURL(snapshot.ref);
+      
+          const docRef = currententry?.key
+            ? doc(firedb, 'webdiary', currententry.key)
+            : undefined;
+      
+          if (!docRef) {
+            return;
+          }
+      
+          const docSnap = await getDoc(docRef);
+          if (!docSnap.exists()) {
+            throw new Error('Document does not exist!');
+          }
+      
+          const entries = {
+            key: state.currentDiaryEntry.key,
+            category: selected,
+            description: state.currentDiaryEntry.description,
+            image: downloadURL,
+            startDate: startDate?.format("ll"),
+            endDate: endDate?.format("ll"),
+            firebaseUser: fireauth.currentUser?.uid,
+            status: !state.currentDiaryEntry.status,
+            timeStamps: formateDate(),
+
+          };
+      
+          await updateDiaryEntry(docRef, entries);
+      
+          const newEntries = {
+            currententry: entries as unknown as DiaryData,
+            curIndex: curIndex,
+            updateStatus: updateStatus,
+          };
+      
+          setState((prevState) => ({
+            currentDiaryEntry: {
+              ...prevState.currentDiaryEntry,
+              status: !state.currentDiaryEntry.status,
+            },
+            message: prevState.message,
+          }));
+      
+          dispatch(selectedEntry(newEntries));
+          navigate('/dash');
+        } catch (error) {
+          console.error('Error updating document: ', error);
+        }
+      };
+      
+      const updateDiaryEntry = async (docRef:any, entries:any) => {
+        await updateDoc(docRef, { ...entries });
+        console.log('Document successfully updated!');
+      };
+
 
           const handleCheckboxChange = (e:any) =>{
             const isChecked = e.target.checked;
@@ -92,13 +165,13 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
               .then((docSnap) => {
                 if (docSnap.exists()) {
                   const entries = {
-                    key: currententry?.key,
-                    category: currententry?.category ,
-                    description: currententry?.description ,
-                    image: currententry?.image ,
-                    startDate: currententry?.startDate ,
-                    endDate: currententry?.endDate ,
-                    status: !currententry?.status ,
+                    key: state.currentDiaryEntry.key,
+                    category: state.currentDiaryEntry.category ,
+                    description: state.currentDiaryEntry.description ,
+                    image: state.currentDiaryEntry.image ,
+                    startDate: state.currentDiaryEntry.startDate ,
+                    endDate: state.currentDiaryEntry.endDate ,
+                    status: !state.currentDiaryEntry.status ,
                   }
                   updateDoc(docRef, {...entries});
                   const newEntries = {
@@ -115,7 +188,7 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
                   message: prevState.message,
                 }));
                 dispatch(selectedEntry(newEntries))
-                  alert(currententry?.status)
+                  alert(state.currentDiaryEntry.status)
                   navigate("/dash")
 
                 } else {
@@ -167,6 +240,9 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
       { currentDiaryEntry?.image ? (<img src={ currentDiaryEntry.image} alt=''/>):null}
       <>
     </>
+    <div className='w-full'>
+    <DateComponent startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} moments={moment()}/>
+    </div> 
       
       <div className='entry-status'>
         <input
@@ -202,6 +278,7 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
             <button
               type="submit"
               className="inline-block px-2 py-1 text-sm font-semibold text-white bg-green-500 rounded"
+              onClick={uploadEntries}
             >
               Update
             </button>
