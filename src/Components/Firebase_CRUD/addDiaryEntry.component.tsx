@@ -7,7 +7,7 @@ import { useAppDispatch, useAppSelector } from "../../hooks/storeHook";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import formateDate from "../timeStamp";
-import defaultimg from "../../resource/download-31.jpg"
+import defaultimg from "../../resource/def.jpg"
 import moment from "moment";
 import { DateComponent } from "../datePicker";
 import { addDoc, collection } from "firebase/firestore";
@@ -100,7 +100,7 @@ const AddDiaryEntry =() =>{
       
       const uploadDefaultImage = async () => {
         const imageRef = ref(storageRef, "default/diary.jpg");
-        const blob = new Blob([defaultimg], { type: "image/jpeg" });
+        const blob = new Blob([defaultimg], { type: "image/jpg" });
         await uploadBytes(imageRef, blob);
         const downloadURL = await getDownloadURL(imageRef);
         return downloadURL;
@@ -246,7 +246,8 @@ const AddDiaryEntry =() =>{
 
           <div className='w-full'>
             <DateComponent startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} moments={moment()}/>
-          </div>          <div className='entry-status'>
+          </div>     
+           <div className='entry-status'>
             <input
              name='entryStatus'
               type="Checkbox"
