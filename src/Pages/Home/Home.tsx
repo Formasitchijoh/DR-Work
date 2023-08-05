@@ -10,10 +10,10 @@ const Home = () => {
 
   return (
     
-    <>
+    <div className="bg-purple-50">
      <Login/>
      
-    </>
+    </div>
   
   );
 };

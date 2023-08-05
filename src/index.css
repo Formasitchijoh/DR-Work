@@ -9,13 +9,13 @@
     }
 
     .header {
-        @apply w-full h-11 flex justify-center items-center gap-20 bg-black
+        @apply w-full h-11 xl:h-20 flex  xl:justify-around  justify-start items-center gap-20 bg-black
     }
     .logo {
         @apply w-10 h-full gap-16 
     } 
     .micro{
-        @apply w-10  h-full mt-2 
+        @apply w-10  h-full mt-2 rounded-lg
     }
     .micro-img {
         @apply w-3/4 my-1  max-h-full
@@ -54,10 +54,10 @@
 }
 
 .facebook-main{
-    @apply mx-5 my-3 bg-black text-white hover:bg-gray-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
+    @apply mx-5 mt-3 bg-black text-white hover:bg-gray-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
 }
 .footer{
-    @apply fixed flex justify-around bottom-0 gap-20
+    @apply fixed flex justify-between items-center bottom-0 gap-20
 }
 .dr-tech{
     @apply text-lg text-gray-900 font-bold ml-2 
@@ -94,10 +94,10 @@
 }
 
 .Item-img{
-    @apply   h-1/2  w-1/4  rounded-sm
+    @apply h-1/2  w-1/4  rounded-sm
 }
 .Item-image{
-    @apply w-full h-16 rounded-sm
+    @apply xl:w-1/2 max-w-full h-16 rounded-sm
 } 
 .item-details{
     @apply justify-start

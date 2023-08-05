@@ -70,7 +70,7 @@ const Header = () => {
             </div>
 
             {
-                !isSignOut ? ( <div className='micro rounded-lg' onClick={ () =>setisSignOut(true)}>
+                !isSignOut ? ( <div className='micro ' onClick={ () =>setisSignOut(true)}>
                 <img src={ user?.photoUrl  ?  user?.photoUrl : user?.email?.charAt(0).toUpperCase() }alt='web diary' className='micro- rounded-full'/>
             </div>) : <SignOutMenu/>
             }

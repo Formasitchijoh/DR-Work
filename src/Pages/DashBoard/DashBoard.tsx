@@ -163,24 +163,22 @@ useEffect(()=>{
       <>
       <div className="w-full my-4 mx-2 flex justify-between items-center">
           <div className="w-1/2 ">
-            <span className="font-sans text-3xl text-gray-900 font-bold">Welcome Back</span>
+            <span className="font-sans xl:text-3xl text-2xl text-gray-900 font-bold">Welcome Back</span>
           </div>
           <div className="w-1/2  mr-5 justify-end flex ">
           <Link to="/add" >
-          <button className="text-white bg-gray-900 text-sm px-3 w-30 items-center h-7 rounded-sm">New entry</button>
+          <button className="text-white bg-gray-900 text-sm px-3 w-30 items-center h-7 rounded-md">New entry</button>
          </Link>
           </div>
          </div>
       </>
       <div className="main xl:pt-5">
         
-         <div className="w-full ">
+         <div className="w-full py-5 ">
          <SearchFilter diaryEntry={diaryentry} setdisplayAll={setisDisplay}/>
          </div>
          {loading && <Loader/>}
-
               <ul >
-                
                     {  !isdisplay? (diaryentry.map((entry,index)=>(
                                 <li
                                     key={entry.key} className={ "font-sans" + (index === curIndex ? "active" : "")}
