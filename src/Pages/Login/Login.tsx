@@ -60,7 +60,7 @@ const signInWithGoogle = async ()=>{
    
    
   return ( 
-    <div className='main'>
+    <div className=' max-w-xl  m-auto  h-[100vh] flex-col justify-center items-center border-2 border-gray-100 bg-white px-0 rounded-sm'>
         <Header/>
         <div className='welcome-main'>
             <h1 className='welcome-header'>Welcome to  private diary</h1>
