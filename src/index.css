@@ -57,7 +57,7 @@
     @apply mx-5 mt-3 bg-black text-white hover:bg-gray-500 hover:text-gray-900 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center
 }
 .footer{
-    @apply fixed flex justify-between items-center bottom-0 gap-20
+    @apply fixed flex bottom-0 w-full pr-10 
 }
 .dr-tech{
     @apply text-lg text-gray-900 font-bold ml-2 
@@ -120,7 +120,7 @@
 
 }
 .new-entry{
-    @apply w-11/12 max-w-screen-sm xl:border-2 xl:py-5 xl:px-5 xl:border-gray-100 xl:rounded-sm xl:mt-10 xl:w-[100vw] m-auto  h-[100vh] flex-col justify-start  items-center   px-0 
+    @apply w-11/12 max-w-screen-sm xl:border-2 xl:py-5 xl:px-5 xl:border-gray-100 xl:rounded-sm xl:mt-10 xl:w-[100vw] m-auto  flex-col justify-start  items-center   px-0 
 }
 .create-new{
     @apply  h-20 flex justify-start items-center

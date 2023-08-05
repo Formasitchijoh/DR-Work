@@ -7,21 +7,24 @@ import { useAppSelector,useAppDispatch } from '../hooks/storeHook';
 import { addEntry } from './Slices/diaryItemSlice';
 import { useNavigate } from 'react-router-dom';
 import { resetEntry } from './Slices/currentEntrySlice';
-type props = {
-    currentDiaryEntry: any,
-    setisdelete:React.Dispatch<React.SetStateAction<boolean>>
-  };
+import Loader from './Loader/loader';
 
+type props = {
+    setisDelete: React.Dispatch<React.SetStateAction<boolean>>,
+  };
   
-const DeleteComponent:React.FC<props> = ({currentDiaryEntry,setisdelete}) => { 
+  // setisdelete:React.Dispatch<React.SetStateAction<boolean>>
+const DeleteComponent:React.FC<props> = ({setisDelete}) => {  
+
         const { diaryentry } = useAppSelector((state) =>state.diaryEntry)
         const { currententry} = useAppSelector(state => state.currentEntry)
+       console.log(`i am in switzerland loging out the entry to be deleted and i s${JSON.stringify(currententry)}`);
+       
         const dispatch = useAppDispatch()
         const navigate = useNavigate()
 
-  
-
       const handleDelete = async () => {
+      
         const docRef = currententry?.key ? doc(firedb, 'webdiary', currententry.key) : undefined;
         if (docRef) { 
           try {
@@ -30,12 +33,13 @@ const DeleteComponent:React.FC<props> = ({currentDiaryEntry,setisdelete}) => {
             if (imgRef) {
               await deleteObject(imgRef);
             }
-            const entries = diaryentry.filter(entry => entry.key !== currentDiaryEntry.key);
-            alert("done")
-            dispatch(addEntry(entries));
+            const entries = currententry ? diaryentry.filter(entry => entry.key !== currententry.key) : undefined;
+            if(entries){
+              dispatch(addEntry(entries));
             dispatch(resetEntry());
-            setisdelete(false)
-            navigate("/dash")
+            setisDelete(false)
+            }
+            // navigate("/dash")
           } catch (error) {
             console.error("Error deleting diary entry:", error);
           }
@@ -43,8 +47,7 @@ const DeleteComponent:React.FC<props> = ({currentDiaryEntry,setisdelete}) => {
       };
 
       const cancelDelete = () =>{
-        setisdelete(false)
-        navigate("/dash")
+        setisDelete(false)
 
       }
 
@@ -55,10 +58,10 @@ const DeleteComponent:React.FC<props> = ({currentDiaryEntry,setisdelete}) => {
      
 
   return (
-    <div className='absolute inset-0 w-2/3 xl:w-1/6 h-[40vh] m-auto bg-teal-700'>
+    <div className='absolute inset-0 w-2/3 xl:w-1/6 h-[40vh] m-auto bg-white'>
         <div className='flex-col justify-center items-center'>
             <div className='bg-orange-700 text-white  font-sans flex justify-center items-center  h-10'>
-                <span className='font-sans text-xl'>{currentDiaryEntry?.key}</span>
+                <span className='font-sans text-xl'>{currententry?.key}</span>
             </div>
             <div className='w-1/4 h-1/2 ml-20'>
             <svg xmlns="http://www.w3.org/2000/svg" width="116" height="116" viewBox="0 0 116 116" fill="none">
