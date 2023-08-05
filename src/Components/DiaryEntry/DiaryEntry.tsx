@@ -35,9 +35,9 @@ const DiaryEntry = (props:Props) => {
         </div>
       </div>
       <div className='Item-body'>
-        <span className='Item-message'>{props.diaryEntry.description}</span>
-        <h3>{props.diaryEntry.startDate} and {props.diaryEntry.endDate}</h3>
-        <h3>{props.diaryEntry.firebaseUser}</h3>
+        <span className='Item-message font-italics'>{props.diaryEntry.description}</span>
+        {/* <h3>{props.diaryEntry.startDate} and {props.diaryEntry.endDate}</h3> */}
+        {/* <h3>{props.diaryEntry.firebaseUser}</h3> */}
 
       </div>
 
