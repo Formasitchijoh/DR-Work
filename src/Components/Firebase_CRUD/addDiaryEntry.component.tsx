@@ -38,8 +38,9 @@ const AddDiaryEntry =() =>{
   type Fruit = typeof CATEGORIES[number];
   const [selected, setSelected] = useState<Fruit>(CATEGORIES[0]);
   
-  const [defaultImageURL, setDefaultImageURL] = useState<string | null>(null);
+  const [defaultImageURL, setDefaultImageURL] = useState<string>();
   const [isSubmitting, setisSubmitting] = useState(false)
+   const [enable, setEnable] = useState(false)
 
   //states for timestamp
   const [startDate,setStartDate] = useState<moment.Moment | null>(null);
@@ -90,37 +91,74 @@ const AddDiaryEntry =() =>{
         }
       };
 
+      // useEffect(() => {
+      //   const fetchDefaultImageURL = async () => {
+      //     const url = await uploadDefaultImage();
+      //     setDefaultImageURL(url);
+      //   };
+      //   fetchDefaultImageURL();
+      // }, []);
+      
+      // let url;
+      // const uploadDefaultImage = async () => {
+      //   const imageRef = ref(storageRef, "default/diary.jpg");
+      //   const blob = new Blob([defaultimg], { type: "image/jpg" });
+      //   await uploadBytes(imageRef, blob);
+      //   const downloadURL = await getDownloadURL(imageRef);
+      //   url = downloadURL
+      //   console.log(downloadURL);
+        
+      //   return downloadURL;
+      // };
+
+      const uploadDefaultImage = async (): Promise<string | null> => {
+        try {
+          const imageRef = ref(storageRef, "default/diary.jpg");
+          const blob = new Blob([defaultimg], { type: "image/jpg" });
+          await uploadBytes(imageRef, blob);
+          const downloadURL = await getDownloadURL(imageRef);
+          console.log(downloadURL);
+          return downloadURL;
+        } catch (error) {
+          console.log("Error uploading default image:", error);
+          return null;
+        }
+      };
+      
       useEffect(() => {
         const fetchDefaultImageURL = async () => {
-          const url = await uploadDefaultImage();
-          setDefaultImageURL(url);
+          try {
+            const url = await uploadDefaultImage();
+            if (url) {
+              setDefaultImageURL(url);
+            }
+          } catch (error) {
+            console.log("Error fetching default image URL:", error);
+          }
         };
         fetchDefaultImageURL();
       }, []);
       
-      const uploadDefaultImage = async () => {
-        const imageRef = ref(storageRef, "default/diary.jpg");
-        const blob = new Blob([defaultimg], { type: "image/jpg" });
-        await uploadBytes(imageRef, blob);
-        const downloadURL = await getDownloadURL(imageRef);
-        return downloadURL;
-      };
+      // Usage example
 
       const handleFireBaseUpload = async (e:any) =>{
+        alert("hola")
         e.preventDefault();
         setState((prev) =>({
           ...prev,category: selected
         }))
-
+        setisSubmitting(true)
         try{ 
 
           if (!imageAsFile) { 
-
+            const storage = ref(storageRef ,`default/def.jpg`);
+          let  defaultUrl = await getDownloadURL(storage);
+           alert("hoala")
             setisSubmitting(true)
               const docRef = await addDoc(collection(firedb, "webdiary"), {
                 category: state.category,
                 description: state.description,
-                image: defaultImageURL,
+                image: defaultUrl,
                 status: state.status,
                 startDate: startDate?.format("ll"),
                 endDate: endDate?.format("ll"),
@@ -132,23 +170,19 @@ const AddDiaryEntry =() =>{
               // dispatch(addEntry(data))
               setisSubmitting(false)
               navigate("/dash");
-            
-              console.log("Document written with ID: ", docRef.id );
-              navigate("/dash")
 
           }
 
           else{
+            setisSubmitting(true)
             const fileRef = ref(storageRef, `images/${imageAsFile.name}`);
             const uploadTask = uploadBytesResumable(fileRef, imageAsFile);            
             uploadTask.on("state_changed", (snapshot) => {
               console.log(snapshot);
-              
             }, (error) => {
               console.log(error);
               
             }, async () => {
-              setisSubmitting(true)
               const downloadURL = await getDownloadURL(fileRef);
               setImageAsUrl((prevObject) => ({ ...prevObject, imgUrl: downloadURL }));
               const docRef = await addDoc(collection(firedb, "webdiary"), {
@@ -195,7 +229,7 @@ const AddDiaryEntry =() =>{
    
 
     return (
-        <>
+        <div className="w-full">
         <Header/>
         <div className='new-entry'>
             {isSubmitting ? (
@@ -256,18 +290,19 @@ const AddDiaryEntry =() =>{
                  onChange={handleCheckboxChange} />
             <span className="text-xl font-sans text-gray-900">Check to Publish as Public</span>
           </div>
-          <div  className='facebook-main mx-0 my-0 '>
+          <div  className='facebook-main mx-0 mb-20 '>
             <button onClick={handleFireBaseUpload}  className=' text-xl text-white'>Save</button>
             </div>
           </form>
                 </div>
 
+                
+
             )}
          
-            <Footer/>
+         <Footer/>
             </div>
-        
-        </>
+        </div>
       )
 }
 export default AddDiaryEntry

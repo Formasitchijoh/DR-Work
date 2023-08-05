@@ -86,7 +86,7 @@ const EntryList = () => {
                }
             onClick={() => setActiveDiaryEntry(entry, index)}
               >
-                <DiaryEntry diaryEntry={entry}/>
+                {/* <DiaryEntry diaryEntry={entry}/> */}
                  </li>
             ))}
           

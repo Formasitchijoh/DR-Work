@@ -10,9 +10,13 @@ import moment from 'moment';
 interface Props {
   diaryEntry: DiaryData[];
   setdisplayAll: React.Dispatch<React.SetStateAction<boolean>>;
+  setActiveDiaryEntry: (diaryEntry: DiaryData, index: number) => void,
+ index: number,
+ setisDelete: React.Dispatch<React.SetStateAction<boolean>>,
+ setActiveEntry: (diaryEntry: DiaryData, index: number) => void
 }
 
-const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll }) => {
+const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiaryEntry,setActiveEntry,index,setisDelete }) => {
 
   const CATEGORIES = ['Food', 'Laundry', 'Agriculture', 'Many'];
   type Fruit = typeof CATEGORIES[number];
@@ -41,27 +45,24 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll }) => {
   };
 
   const handleDateSelect = useCallback(() => { 
+    setisSelect(true)
     setdisplayAll(true);
+    alert("hoala")
     if (startDate && endDate) {
       const results = diaryEntry.filter((entry) => {
         const selectedStartDate = moment(entry.startDate, 'll');
         return selectedStartDate.isBetween(startDate, endDate, 'day', '[]');
       });
 
+      alert(JSON.stringify(results))
       setisDatedisplay(true);
       setstate({
         query: '',
         list: results,
       });
-    } 
-    // setdisplayAll(false)
-  }, [diaryEntry, setdisplayAll, endDate, startDate]);
+      setisSelect(false)
+    }   }, [diaryEntry, setdisplayAll, endDate, startDate]);
 
-  // useEffect(()=>{
-    
-  //   handleDateSelect()
-  // },[handleDateSelect])
-  
 
   const handleIsSelect = (option:any) => {
     setdisplayAll(true);
@@ -78,10 +79,13 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll }) => {
       list: results,
     });
   };
-
+  // sm:absolute xl:max-w-sm  justify-center items-center pl-5 sm:inset-10 w-3/4 ml-12 h-full bg-gray-100
     const SelectedCategory = () =>{
       return(
-        < div className='absolute xl:max-w-sm xl:ml-1/4 justify-center items-center pl-5  inset-10 w-3/4 ml-12 h-12/12 bg-gray-100 '> 
+        <div className='fixed flex-col justify-center items-center inset-0 z-50  w-screen h-screen mb-10 mt-5'> 
+        <div className='bg-purple-100 xl:w-1/4 w-3/5 mx-auto  p-10 h-full flex-col justify-center items-center xl:mr-10 mr-2 '>
+        {/* <h1 className='text-3xl mb-5 mt-10 w-full font-bold bg-gray-950 h-20 text-white  items-center'>Filter </h1> */}
+        < div className=''> 
         <h1 className='text-2xl text-gray-900 my-5 mt-10 font-bold'>Filter your diary entries</h1>
         <div className='w-full p-1'>
         <div className='w-full mb-5'>
@@ -96,6 +100,12 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll }) => {
             </div>
         </div>
         </div>
+
+
+        </div>
+           
+         </div>
+       
       )
     }
   return (
@@ -119,7 +129,7 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll }) => {
             {
                 (state.query === 'No posts match the query' ? "":state.list.map(entry=>{
                     return <li key={entry.key}>
-                      <DiaryEntry diaryEntry={entry}/>
+                      <DiaryEntry entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry}/>
                     </li>
                 }))
             }

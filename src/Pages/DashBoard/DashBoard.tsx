@@ -1,4 +1,4 @@
-import React, {  useEffect, useState } from "react";
+import React, {  ChangeEvent, useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from '../../hooks/storeHook'
 import Header from '../../Components/Header/Header-Component'
 import { Link } from "react-router-dom";
@@ -12,7 +12,12 @@ import moment from 'moment'
 import Loader from "../../Components/Loader/loader";
 import { fireauth, firedb } from '../../firebase';
 import { useNavigate } from "react-router-dom";
-import { CollectionReference, DocumentData, OrderByDirection, Query, collection, getDocs,or,orderBy,query, where } from "firebase/firestore";
+import { CollectionReference, DocumentData, OrderByDirection, Query, collection, doc, getDoc, getDocs,or,orderBy,query, updateDoc, where } from "firebase/firestore";
+import { uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import { CustomSelect } from "../../Components/SelectDropDown";
+import formateDate from "../../Components/timeStamp";
+import DeleteComponent from "../../Components/DeleteComponent";
+import { ref } from "yup";
 type State = {
   diaryEntry: Array<DiaryData>,
   currentEntry: DiaryData | null,
@@ -36,12 +41,11 @@ const LoginSuccess: React.FC = () => {
 const DashBoard = ()=>{
 
   //redux states
-  const { diaryentry } = useAppSelector(state => state.diaryEntry)
-  const { currententry, curIndex,updateStatus}  = useAppSelector(state => state.currentEntry)
+  const { diaryentry } = useAppSelector(state => state.diaryEntry) //get entire diary entry list
+  const { currententry, curIndex,updateStatus}  = useAppSelector(state => state.currentEntry) //get the currently selected entry
     const dispatch = useAppDispatch()
   const navigate = useNavigate()
-    console.log( JSON.stringify(currententry));
-    
+
     //custom states
     const [state, setState] = useState<State>({
       diaryEntry: [],
@@ -50,34 +54,61 @@ const DashBoard = ()=>{
    });
    const sessionStorage = window.sessionStorage;
    const loginSuccessModalDisplayed = sessionStorage.getItem('LoginSuccess');
-  const [isLoggedIn, setIsLoggedIn] = useState(loginSuccessModalDisplayed === 'false');
-    const [isdisplay, setisDisplay] = useState(false) //conditionally display search or entire result
-
-    const [loading, setLoading] = useState(true);
-
-    //states for closing diary component, and warning modal
-    const [closeconfirm, setcloseconfirm] = useState(false)
-
+ 
+ //UX state 
+   const [isLoggedIn, setIsLoggedIn] = useState(loginSuccessModalDisplayed === 'false'); //logged in state
+  const [isdisplay, setisDisplay] = useState(false) //conditionally display search or entire result
+  const [loading, setLoading] = useState(true);
+  const [closeconfirm, setcloseconfirm] = useState(false)
   
     //states for datepicker
     const [startDate,setStartDate] = useState('');
     const [endDate,setEndDate] = useState('');
     const [isloading, setisloading] = useState(true)
 
+    //current entry states
+      const [imageAsFile, setImageAsFile] = useState<File | undefined>(undefined);
+
+  const CATEGORIES = ["Food", "Laundry", "Agriculture"] ;
+  const [selected, setSelected] = useState<Fruit>(CATEGORIES[0]);
+  type Fruit = typeof CATEGORIES[number];
+const [isDelete, setisDelete] = useState(false)
+const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
+
+//states for timestamp
+const [curstartDate,setcurStartDate] = useState<moment.Moment | null>(null);
+const [curendDate,setcurEndDate] = useState<moment.Moment | null>(null);
+const [isSubmiting, setisSubmiting] = useState(false)
+const [enable, setEnable] = useState(false) 
+const [curstate, setcurState] = useState({
+  currentDiaryEntry: {
+    key: currententry?.key || null,
+    category: currententry?.category || "",
+    description: currententry?.description || "",
+    image: currententry?.image || "",
+    startDate: currententry?.startDate || "",
+    endDate: currententry?.endDate || " ",
+    status: currententry?.status || false,
+    currentIndex: curIndex
+  },
+  message: "",
+});
+
+const [test, settest] = useState(false)
 
 
-// Loop through the documents and log the data for each one
+//useEffct Hooks
 
-
-//useEffects
+//Fetch all user data from firestore using the query language
 useEffect(() =>{
   const fetchAllEntries = async () => {  
    
     try {  
       const diaryRef = collection(firedb, "webdiary");
-     let q = query(diaryRef, or(where("firebaseUser", "==", fireauth.currentUser?.uid), where("status", "==", true)));
-     q = query(diaryRef, orderBy("timeStamps", "desc" as OrderByDirection));
-      const querySnapshot = await getDocs(q);
+    let  query_ = query(diaryRef, orderBy("timeStamps", "desc" as OrderByDirection));
+
+    query_ = query(diaryRef, or(where("firebaseUser", "==", fireauth.currentUser?.uid), where("status", "==", true)));
+      const querySnapshot = await getDocs(query_);
   
       
       const entries: DiaryData[] = [];
@@ -97,8 +128,8 @@ useEffect(() =>{
         } as DiaryData);
       });
       
-      setState((prevState) => ({ ...prevState, diaryEntry: entries }));
-      dispatch(addEntry(entries));    
+      setState((prevState) => ({ ...prevState, diaryEntry: entries })); //assign the state the newly fetch entries
+      dispatch(addEntry(entries));    //dispatch the newly fetch entries to firestore
     } catch (error) {
       console.error(error);
     }
@@ -107,7 +138,9 @@ useEffect(() =>{
   fetchAllEntries();
 
 },[fireauth.currentUser?.uid])
-  
+
+
+//login success useEfffecr for handling successfull log in
 useEffect(() => {
   if (loginSuccessModalDisplayed) {
     sessionStorage.setItem('LoginSuccess', 'false');
@@ -119,43 +152,218 @@ useEffect(() => {
   },1000)
 }, []);
 
+// Loop through the documents and log the data for each one
+
+
 //Event handlers
-
-   
-  
-    const refreshList = () => {
-      setState(prevState => ({...prevState, currentEntry: null, currentIndex: -1}));
-    };
-
-    const setActiveDiaryEntry = (diaryEntry: DiaryData, index: number) => { 
-      setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
-      
-      dispatch(selectedEntry({
-        currententry: diaryEntry,
-        curIndex: index,
-        updateStatus: true
-      }));
-      navigate("/entry")
-    }; 
-   
-    
+ 
+ 
 //getting the diaryEntry from the state stored from the firebase fetch and storing it in the redux store
-const { diaryEntry, currentEntry, currentIndex } = state;
+const { diaryEntry, currentEntry, currentIndex } = state; 
+console.log(JSON.stringify(currentEntry) + "plus" + currentIndex);
+console.log(`the current second entry is ${JSON.stringify(currententry)} and the index is ${curIndex}`)
+
 useEffect(()=>{
   dispatch(
     addEntry(diaryEntry))  
 },[diaryEntry,dispatch])
 
 
-  useEffect(() => {
-    // Simulate data loading delay for demonstration purposes
-    // const timer = setTimeout(() => {
-    //   setLoading(false);
-    // }, 3000);
-    setLoading(false);
+// #########################################################
 
-    // return () => clearTimeout(timer);
-  }, [diaryentry]);
+  const SelectCategory = () => {
+    return (
+      <>
+        <CustomSelect value={selected} onChange={setSelected} options={CATEGORIES} />
+      </>
+    );
+  };
+
+    const handleDescriptionChange = (e:ChangeEvent<HTMLInputElement>) =>{
+      const description = e.target.value
+      setcurState((prevState) => ({
+          currentDiaryEntry: {
+          ...prevState.currentDiaryEntry,
+          description:description,
+        },
+        message: prevState.message,
+      }));
+    }
+
+    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) =>{
+      const file = e.target.files?.[0];
+      setImageAsFile(file)
+      imageAsFile && console.log("fffffffffffffffff");
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          setdisplayImage(reader.result as string);
+        };
+        reader.readAsDataURL(file);
+      }
+
+    };
+
+  //   const uploadEntries = async () => {
+  //     setisSubmiting(true)
+  //    try {
+  //      const imageRef = ref(storageRef, `images/${imageAsFile?.name}`);
+  //      if (!imageAsFile) {
+  //        return;
+  //      }
+   
+  //      const snapshot = await uploadBytesResumable(imageRef, imageAsFile);
+  //      const downloadURL = await getDownloadURL(snapshot.ref);
+   
+  //      const docRef = currententry?.key
+  //        ? doc(firedb, 'webdiary', currententry.key)
+  //        : undefined;
+   
+  //      if (!docRef) {
+  //        return;
+  //      }
+   
+  //      const docSnap = await getDoc(docRef);
+  //      if (!docSnap.exists()) {
+  //        throw new Error('Document does not exist!');
+  //      }
+   
+  //      const entries = {
+  //        key: diaryEntry.key,
+  //        category: selected,
+  //        description: diaryEntry.description,
+  //        image: downloadURL,
+  //        startDate: curstartDate?.format("ll"),
+  //        endDate: curendDate?.format("ll"),
+  //        firebaseUser: fireauth.currentUser?.uid,
+  //        status: !diaryEntry.status,
+  //        timeStamps: formateDate(),
+
+  //      };
+   
+  //      await updateDiaryEntry(docRef, entries);
+   
+  //      const newEntries = {
+  //        currententry: entries as unknown as DiaryData,
+  //        curIndex: curIndex,
+  //        updateStatus: updateStatus,
+  //      };
+   
+  //      setcurState((prevState) => ({
+  //        currentDiaryEntry: {
+  //          ...prevState.currentDiaryEntry,
+  //          status: !diaryEntry.status,
+  //        },
+  //        message: prevState.message,
+  //      }));
+   
+  //      dispatch(selectedEntry(newEntries));
+  //      setisSubmiting(false)
+  //      navigate('/dash');
+  //    } catch (error) {
+  //      console.error('Error updating document: ', error);
+  //    }
+  //  };
+   
+    
+
+    const updateDiaryEntry = async (docRef:any, entries:any) => {
+      await updateDoc(docRef, { ...entries });
+      console.log('Document successfully updated!');
+    };
+
+
+        const handleCheckboxChange = (e:any) =>{
+          const isChecked = e.target.checked;
+          setState(prevState =>({
+            ...prevState,
+            status:isChecked
+          }));
+        }
+
+        const updateEntry = (diaryEntry: DiaryData) =>{
+       // Get a reference to the document you want to update
+           const docRef = diaryEntry?.key ? doc(firedb, 'webdiary', diaryEntry.key) : undefined;
+            if(docRef){
+              getDoc(docRef)
+            .then((docSnap) => {
+              if (docSnap.exists()) {
+                const entries = {
+                  key: diaryEntry.key,
+                  category: diaryEntry.category ,
+                  description: diaryEntry.description ,
+                  image: diaryEntry.image ,
+                  startDate: diaryEntry.startDate ,
+                  endDate: diaryEntry.endDate ,
+                  status: !diaryEntry.status ,
+                } 
+                alert(JSON.stringify(`previous status ${diaryEntry.status} and the current ${entries.status}`))
+                updateDoc(docRef, {...entries})
+                .then(()=>{
+                  const newEntries = {
+                  currententry:entries as DiaryData,
+                  curIndex:curIndex,
+                  updateStatus:updateStatus
+                  
+                }
+                dispatch(selectedEntry(newEntries))
+                alert(`${JSON.stringify(newEntries)} and new`)
+                setcurState((prevState) => ({
+                  currentDiaryEntry: {
+                  ...prevState.currentDiaryEntry,
+                  status:!diaryEntry.status,
+                },
+                message: prevState.message,
+              }));
+                })
+                
+
+              } else {
+                throw new Error('Document does not exist!');
+              }
+            })
+            .then(() => {
+              console.log('Document successfully updated!');
+            })
+            .catch((error) => {
+              console.error('Error updating document: ', error);
+            });
+
+            }
+
+            else {
+              console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");  
+            }}
+
+            const setActiveDiaryEntry = (diaryEntry: DiaryData, index: number) => { 
+              setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
+              alert(`the current entry is ${JSON.stringify(diaryentry[index])} and the index is ${index}`)
+          //  dispatch(selectedEntry({
+          //       currententry: diaryEntry,
+          //       curIndex: index,
+          //       updateStatus: true
+          //     }));
+
+              updateEntry(diaryEntry)
+              // navigate("/entry") 
+            };
+
+            const setActiveEntry = (diaryEntry: DiaryData, index: number) => { 
+              setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
+              alert(`the current entry is ${JSON.stringify(diaryentry[index])} and the index is ${index}`)
+           dispatch(selectedEntry({
+                currententry: diaryEntry,
+                curIndex: index,
+                updateStatus: true
+              }));
+
+              // navigate("/entry") 
+            };
+
+        const { currentDiaryEntry } = curstate;
+        console.log (`this is the lost ${JSON.stringify(currententry)}`)
+
 
     return (
       <>
@@ -175,27 +383,30 @@ useEffect(()=>{
       <div className="main xl:pt-5">
         
          <div className="w-full py-5 ">
-         <SearchFilter diaryEntry={diaryentry} setdisplayAll={setisDisplay}/>
+         <SearchFilter diaryEntry={diaryentry} setdisplayAll={setisDisplay} setActiveDiaryEntry={setActiveDiaryEntry} setActiveEntry={setActiveEntry} index={curIndex} setisDelete={setisDelete}/>
          </div>
          {loading && <Loader/>}
               <ul >
                     {  !isdisplay? (diaryentry.map((entry,index)=>(
                                 <li
                                     key={entry.key} className={ "font-sans" + (index === curIndex ? "active" : "")}
-                                  onClick={() => setActiveDiaryEntry(entry, index)} >
-                                  <DiaryEntry diaryEntry={entry}/>
+                                   >
+                                  <DiaryEntry entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry} />
+
                               </li>
                           ))): null
                     }
 
             </ul> 
-          
-
-         
+      
+         {
+          isDelete && <DeleteComponent setisDelete={setisDelete}/>
+         }
          
         
          {/* { isLoggedIn && <LoginSuccess />} */}
       </div>
+      
        
 
       </>
