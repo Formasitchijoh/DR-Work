@@ -16,8 +16,12 @@ import { storageRef } from '../../firebase'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
 import { DateComponent } from '../datePicker'
 import formateDate from '../timeStamp'
-const DiaryEntryComponent = () => { 
+import Loader from '../Loader/loader'
+
+const DiaryEntryComponent = () => {  
+
   const { currententry,curIndex,updateStatus } = useAppSelector(state => state.currentEntry);
+
   const { diaryentry } = useAppSelector(state =>state.diaryEntry)
   const navigate = useNavigate()
   const dispatch = useAppDispatch()
@@ -46,6 +50,8 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
 //states for timestamp
 const [startDate,setStartDate] = useState<moment.Moment | null>(null);
 const [endDate,setEndDate] = useState<moment.Moment | null>(null);
+const [isSubmiting, setisSubmiting] = useState(false)
+const [enable, setEnable] = useState(false)
 
 
     const SelectCategory = () => {
@@ -83,6 +89,7 @@ const [endDate,setEndDate] = useState<moment.Moment | null>(null);
       };
 
       const uploadEntries = async () => {
+         setisSubmiting(true)
         try {
           const imageRef = ref(storageRef, `images/${imageAsFile?.name}`);
           if (!imageAsFile) {
@@ -135,12 +142,14 @@ const [endDate,setEndDate] = useState<moment.Moment | null>(null);
           }));
       
           dispatch(selectedEntry(newEntries));
+          setisSubmiting(false)
           navigate('/dash');
         } catch (error) {
           console.error('Error updating document: ', error);
         }
       };
       
+
       const updateDiaryEntry = async (docRef:any, entries:any) => {
         await updateDoc(docRef, { ...entries });
         console.log('Document successfully updated!');
@@ -157,7 +166,7 @@ const [endDate,setEndDate] = useState<moment.Moment | null>(null);
 
 
           const updateEntry = () =>{
-                              // Get a reference to the document you want to update
+         // Get a reference to the document you want to update
             console.log(JSON.stringify(currententry));
              const docRef = currententry?.key ? doc(firedb, 'webdiary', currententry.key) : undefined;
               if(docRef){
@@ -211,9 +220,8 @@ const [endDate,setEndDate] = useState<moment.Moment | null>(null);
           const { currentDiaryEntry } = state;
 
   return (
-    <>
+    <div className='h-full'>
         <Header/>
-
         <div className='new-entry'>
       <div >
       <div className='category'>
@@ -243,6 +251,14 @@ const [endDate,setEndDate] = useState<moment.Moment | null>(null);
     <div className='w-full'>
     <DateComponent startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} moments={moment()}/>
     </div> 
+    {
+          isSubmiting  && <div className='fixed flex justify-center items-center inset-0 z-50  w-screen h-screen '>
+           <div className='bg-purple-100 w-30 mx-auto p-10 h-50 flex-col justify-center items-center '>
+           <span>Submitting ....</span>
+            <Loader/>
+           </div>
+          </div>
+        }
       
       <div className='entry-status'>
         <input
@@ -254,6 +270,8 @@ const [endDate,setEndDate] = useState<moment.Moment | null>(null);
         <span>Check to confirm if you want to continue</span>
       </div>
       </div>
+
+      <div className='mb-20  flex justify-center items-center gap-5'>
       { currentDiaryEntry?.status
              ? (
               <button
@@ -277,21 +295,26 @@ const [endDate,setEndDate] = useState<moment.Moment | null>(null);
 
             <button
               type="submit"
-              className="inline-block px-2 py-1 text-sm font-semibold text-white bg-green-500 rounded"
+              className={`inline-block px-2 py-1 text-sm font-semibold text-white ${enable && 'bg-blue-400'} bg-green-500 rounded`}
               onClick={uploadEntries}
             >
               Update
             </button>
-            <p>{state.message}</p>
 
-            {
+      </div>
+      
+
+            {/* {
               isdelete && <DeleteComponent currentDiaryEntry={currententry}  setisdelete={setisDelete} /> 
-            }
+            } */}
 
      
         <Footer/>
+        
         </div>
-    </>
+
+       
+    </div>
 
   )
 }
