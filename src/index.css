@@ -9,25 +9,25 @@
     }
 
     .header {
-        @apply w-full h-11 xl:h-20 flex  xl:justify-around  justify-start items-center gap-20 bg-black
+        @apply w-full h-8 xl:h-20 xl:pt-5 flex  xl:justify-around  justify-start items-center gap-20 bg-black
     }
     .logo {
-        @apply w-10 h-full gap-16 
+        @apply w-10 h-full gap-16  xl:w-20 xl:h-full
     } 
     .micro{
-        @apply w-10  h-full mt-2 rounded-lg
+        @apply w-7  h-7 xl:w-10 xl:h-10 rounded-lg
     }
     .micro-img {
         @apply w-3/4 my-1  max-h-full
     }
     .heading {
-        @apply w-36 h-full  p-1 
+        @apply w-36 h-full  p-1  xl:w-1/4 
     }
     .logo-img{
         @apply  w-full  max-h-full
     }
     .header-text{
-        @apply text-xl from-neutral-900 text-white
+        @apply text-lg xl:text-2xl block float-none from-neutral-900 text-white
     }
     .welcome-main{
         @apply flex flex-col justify-center items-center px-10 m-auto mt-20  gap-2 
@@ -87,17 +87,17 @@
 }
 /* Styling the diary Item  */
 .Item-card{
-    @apply   rounded-sm w-11/12 h-1/2  mb-5  ml-4 bg-gray-50
+    @apply   rounded-sm w-11/12 h-1/2  mb-5  ml-4 bg-gray-50  xl:w-3/4 xl:h-[20vh]
 }
 .Item-header{
     @apply w-full flex justify-start gap-5 px-2 items-center m-auto 
 }
 
 .Item-img{
-    @apply h-1/2  w-1/4  rounded-sm
+    @apply h-1/2  w-1/4  rounded-sm xl:w-1/2
 }
 .Item-image{
-    @apply xl:w-1/2 max-w-full h-16 rounded-sm
+    @apply xl:w-full max-w-full h-16 xl:h-1/2 rounded-sm
 } 
 .item-details{
     @apply justify-start

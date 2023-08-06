@@ -51,8 +51,6 @@ const Header = () => {
                 <li className='text-xl font-bold list-none bg-slate-200 py-2 border-y-2 border-gray-500 px-2 hover:translate-x-7 hover:bg-purple-400 hover:transition-transform ' onClick={handleSignOut}>SignOut</li>
                 <li className='text-xl font-bold list-none bg-slate-200 py-2 border-y-2 border-gray-500 px-2  hover:shadow-md hover:opacity-80 hover:bg-teal-100' onClick={handleSignOut}>Profile</li>
                 <li className='text-xl font-bold list-none bg-slate-200 py-2 border-y-2 border-gray-500 px-2  hover:scale-110 hover:rotate-3 hover:bg-purple-400 hover:transition-transform' onClick={handleSignOut}>About</li>
-
-
             </ul>
         )
     }
@@ -71,7 +69,7 @@ const Header = () => {
 
             {
                 !isSignOut ? ( <div className='micro ' onClick={ () =>setisSignOut(true)}>
-                <img src={ user?.photoUrl  ?  user?.photoUrl : user?.email?.charAt(0).toUpperCase() }alt='web diary' className='micro- rounded-full'/>
+                <img src={ user?.photoUrl  ?  user?.photoUrl : user?.email?.charAt(0).toUpperCase() }alt='web diary' className='micro rounded-full'/>
             </div>) : <SignOutMenu/>
             }
             

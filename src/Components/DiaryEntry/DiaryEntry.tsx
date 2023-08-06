@@ -50,12 +50,12 @@ const entry:React.FC<Props> = ({entry,setActiveDiaryEntry,setActiveEntry,index,s
 
 
       </div>
-      <div className='w-1/4 h-[7vh] ' onClick={handleDelete}>
+      <div className='w-1/4 xl:w-2/3 h-[7vh] ' onClick={handleDelete}>
       <img src={deletebtn} alt='' className='block w-1/2 h-1/4 float-right top-0'/>
     </div>
     </div>
     <div className='Item-body'>
-      <span className='Item-message font-italics'>{entry.description}</span>
+      <span className='Item-message text-xl italic'>{entry.description}</span>
       
     </div>
    
