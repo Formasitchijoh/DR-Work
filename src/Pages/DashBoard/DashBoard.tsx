@@ -369,11 +369,11 @@ useEffect(()=>{
       <>
       <Header/>
       <>
-      <div className="w-full my-4 mx-2 flex justify-between items-center">
-          <div className="w-1/2 ">
-            <span className="font-sans xl:text-3xl text-2xl text-gray-900 font-bold">Welcome Back</span>
+      <div className="w-full xl:w-10/12 my-8 mx-2 flex justify-evenly   items-center">
+          <div className="w-1/2 xl:w-1/4 ">
+            <span className="font-sans xl:hidden  xl:text-3xl text-2xl text-gray-900 font-bold">Welcome Back</span>
           </div>
-          <div className="w-1/2  mr-5 justify-end flex ">
+          <div className="w-1/2  mr-5 justify-end xl:justify-end flex ">
           <Link to="/add" >
           <button className="text-white bg-gray-900 text-sm px-3 w-30 items-center h-7 rounded-md">New entry</button>
          </Link>
@@ -386,10 +386,10 @@ useEffect(()=>{
          <SearchFilter diaryEntry={diaryentry} setdisplayAll={setisDisplay} setActiveDiaryEntry={setActiveDiaryEntry} setActiveEntry={setActiveEntry} index={curIndex} setisDelete={setisDelete}/>
          </div>
          {loading && <Loader/>}
-              <ul >
+              <ul className=" xl:grid xl:grid-cols-2 " >
                     {  !isdisplay? (diaryentry.map((entry,index)=>(
                                 <li
-                                    key={entry.key} className={ "font-sans" + (index === curIndex ? "active" : "")}
+                                    key={entry.key} className={ "font-sans " + (index === curIndex ? "active" : "")}
                                    >
                                   <DiaryEntry entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry} />
 

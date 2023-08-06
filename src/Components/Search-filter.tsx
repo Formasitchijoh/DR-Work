@@ -83,8 +83,10 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
     const SelectedCategory = () =>{
       return(
         <div className='fixed flex-col justify-center items-center inset-0 z-50  w-screen h-screen mb-10 mt-5'> 
-        <div className='bg-purple-100 xl:w-1/4 w-3/5 mx-auto  p-10 h-full flex-col justify-center items-center xl:mr-10 mr-2 '>
+        <div className='bg-black xl:w-1/4 w-3/5 mx-auto  p-10 h-10 flex-col justify-center items-center xl:mr-10 mr-2'><div className='text-2xl text-white  xl:w-1/2  xl:float-right'>Filter</div></div>
+        <div className='bg-purple-50 opacity-90 xl:w-1/4 w-3/5 mx-auto  p-10 h-full flex-col justify-center items-center xl:mr-10 mr-2 '>
         {/* <h1 className='text-3xl mb-5 mt-10 w-full font-bold bg-gray-950 h-20 text-white  items-center'>Filter </h1> */}
+       
         < div className=''> 
         <h1 className='text-2xl text-gray-900 my-5 mt-10 font-bold'>Filter your diary entries</h1>
         <div className='w-full p-1'>
@@ -109,23 +111,23 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
       )
     }
   return (
-    <div className='mb-5' >
-    <div className='w-full flex justify-around items-center'>
-        <form className='flex  items-center border-b-2 border-gray-500 w-11/12 ml-5'>
+    <div className='mb-5 w-full' >
+    <div className='w-full  flex xl:justify-center justify-around items-center'>
+        <form className='flex  xl:justify-between items-center border-b-2  border-gray-500 xl:w-1/2 ml-5'>
             <input
              type='search'
               placeholder='Type here to search' 
               value={state.query}
               onChange={handleChange}
-              className='text-gray-900 focus:outline-none focus:border-none font-sans font-bold'/>
+              className='text-gray-900 focus:outline-none focus:border-none font-sans font-bold xl:w-3/4'/>
             <button className='text-2xl font-bold'><BiSearch/></button>
         </form>
        
-        <div className='border-b-2 w-full border-gray-500 block items-center  mx-5  justify-center'>
-          <button onClick={()=> setisSelect(true)} ><CiFilter className=' block items-center  mx-5 text-xl justify-center'/></button>
+        <div className=' w-full xl:w-1/4  block items-center  mx-5  justify-center'>
+          <button onClick={()=> setisSelect(true)} ><CiFilter className='border-b-2 border-gray-500  block items-center  mx-5 text-xl justify-center xl:w-10'/></button>
         </div>
     </div>
-        <ul>
+        <ul className=' xl:grid xl:grid-cols-2 mt-5'>
             {
                 (state.query === 'No posts match the query' ? "":state.list.map(entry=>{
                     return <li key={entry.key}>

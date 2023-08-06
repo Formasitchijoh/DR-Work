@@ -3,7 +3,7 @@ import React from 'react'
 const Loader = () => {
   return (
     
-        <div className="flex items-center h-full w-full ">
+          <div className="flex items-center h-full w-full ">
           <span className="w-3 h-3 rounded-full bg-blue-500 mx-1 animate-pulse"></span>
           <span className="w-3 h-3 rounded-full bg-blue-500 mx-1 animate-pulse"></span>
           <span className="w-3 h-3 rounded-full bg-blue-500 mx-1 animate-pulse"></span>
@@ -21,6 +21,7 @@ const Loader = () => {
             }
           `}</style>
         </div>
+        
       );
   
 }
