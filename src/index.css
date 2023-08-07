@@ -9,7 +9,7 @@
     }
 
     .header {
-        @apply w-full h-8 xl:h-20 xl:pt-5 flex  xl:justify-around  justify-start items-center gap-20 bg-black
+        @apply w-full h-8 xl:h-20 xl:pt-5 flex  xl:justify-around  justify-start items-center gap-20 bg-black xl:gap-10
     }
     .logo {
         @apply w-10 h-full gap-16  xl:w-20 xl:h-full
@@ -24,7 +24,7 @@
         @apply w-36 h-full  p-1  xl:w-1/4 
     }
     .logo-img{
-        @apply  w-full  max-h-full
+        @apply  w-1/4  max-h-full
     }
     .header-text{
         @apply text-lg xl:text-2xl block float-none from-neutral-900 text-white
