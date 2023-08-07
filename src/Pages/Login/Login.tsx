@@ -9,6 +9,7 @@ import FacebookAuth from '../Auth/FacebookAuth'
 import Footer from '../../Components/Footer/Footer'
 import Cookies from 'js-cookie'
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { LoginHeader } from '../../Components/Header/Header-Component'
 const Login = () => {
 
     const {user} = useAppSelector((state)=>state.auth)
@@ -60,8 +61,10 @@ const signInWithGoogle = async ()=>{
    
    
   return ( 
-    <div className=' max-w-xl  m-auto  h-[100vh] flex-col justify-center items-center border-2 border-gray-100 bg-white px-0 rounded-sm'>
-        <Header/>
+    <div className='xl:w-2xl'>
+        <LoginHeader/>
+      <div className='p-10 my-20 pb-10 shadow-2xl  max-w-lg  m-auto mt-10 mx-3  xl:mx-0 h-[80vh] flex-col justify-center items-center xl:border-4 border-2 border-gray-200 bg-white px-0 rounded-lg'>
+        <div className='h-[50vh]'>
         <div className='welcome-main'>
             <h1 className='welcome-header'>Welcome to  private diary</h1>
                 <div className='w-full '>
@@ -80,8 +83,15 @@ const signInWithGoogle = async ()=>{
                 <FacebookAuth/>
              </div>
         </div>
-      <Footer/>
+        <div className=' xl:h-[25vh] h-[15vh] flex flex-col justify-end pb-5'>
+             <Footer/>
+             </div>
+
+        </div>
+        
     </div>
+    </div>
+   
   )
 }
 
