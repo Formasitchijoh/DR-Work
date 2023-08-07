@@ -63,7 +63,7 @@ const signInWithGoogle = async ()=>{
   return ( 
     <div className='xl:w-2xl'>
         <LoginHeader/>
-      <div className='p-10 my-20 pb-10 shadow-2xl  max-w-lg  m-auto mt-10 mx-3  xl:mx-0 h-[80vh] flex-col justify-center items-center xl:border-4 border-2 border-gray-200 bg-white px-0 rounded-lg'>
+      <div className='p-10 my-20 pb-10 shadow-2xl  max-w-lg  m-auto mt-10  h-[80vh] flex-col justify-center items-center border-4 border-gray-200 bg-white px-0 rounded-lg'>
         <div className='h-[50vh]'>
         <div className='welcome-main'>
             <h1 className='welcome-header'>Welcome to  private diary</h1>
