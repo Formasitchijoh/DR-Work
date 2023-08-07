@@ -6,6 +6,21 @@ import Cookies from 'js-cookie'
 import { fireauth } from '../../firebase'
 import { login,logout } from '../Slices/authSlice'
 import { useNavigate } from 'react-router-dom'
+
+
+export  const LoginHeader = () =>{
+  return(
+    <div className="header xl:justify-start  ">
+        <div className='logo flex justify-center items-center  w-3/4 xl:w-1/4 xl:ml-20'>
+           <img  src={logo} alt='web diary' className=' w-1/4 xl:w-20  h-full'/>
+          <p className=' text-sm  xl:text-2xl block float-none from-neutral-900 text-white'>Private Journal</p>
+        </div>
+       
+    </div>
+
+  )
+}
+
 const Header = () => {
     const { user } = useAppSelector(state => state.auth)
   const navigate = useNavigate()
@@ -54,6 +69,7 @@ const Header = () => {
             </ul>
         )
     }
+
   
       
 
