@@ -4,7 +4,6 @@ import { getDownloadURL, ref, uploadBytes, uploadBytesResumable } from "firebase
 import Footer from "../Footer/Footer";
 import {CustomSelect } from "../SelectDropDown";
 import { useAppDispatch, useAppSelector } from "../../hooks/storeHook";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import formateDate from "../timeStamp";
 import defaultimg from "../../resource/def.jpg"
@@ -15,8 +14,7 @@ import { addEntry } from "../Slices/diaryItemSlice";
 import Header from "../Header/Header-Component";
 import Loader from "../Loader/loader";
 const AddDiaryEntry =() =>{
-    const { diaryentry } = useAppSelector((state)=>state.diaryEntry)
-    const dispatch = useAppDispatch()
+    // const { diaryentry } = useAppSelector((state)=>state.diaryEntry)
     const navigate = useNavigate()
     const [state, setState] = useState({
         category: "",
@@ -39,8 +37,8 @@ const AddDiaryEntry =() =>{
   const [selected, setSelected] = useState<Fruit>(CATEGORIES[0]);
   
   const [defaultImageURL, setDefaultImageURL] = useState<string>();
-  const [isSubmitting, setisSubmitting] = useState(false)
-   const [enable, setEnable] = useState(false)
+  const [isSubmitting, setisSubmitting] = useState(false);
+   const [disable, setDisable] = useState(false)
 
   //states for timestamp
   const [startDate,setStartDate] = useState<moment.Moment | null>(null);
@@ -94,13 +92,13 @@ const AddDiaryEntry =() =>{
       // useEffect(() => {
       //   const fetchDefaultImageURL = async () => {
       //     const url = await uploadDefaultImage();
-      //     setDefaultImageURL(url);
+      //     url && setDefaultImageURL(url);
       //   };
       //   fetchDefaultImageURL();
       // }, []);
       
       // let url;
-      // const uploadDefaultImage = async () => {
+      // const uploadDefaultImages = async () => {
       //   const imageRef = ref(storageRef, "default/diary.jpg");
       //   const blob = new Blob([defaultimg], { type: "image/jpg" });
       //   await uploadBytes(imageRef, blob);
@@ -142,18 +140,17 @@ const AddDiaryEntry =() =>{
       // Usage example
 
       const handleFireBaseUpload = async (e:any) =>{
-        alert("hola")
-        e.preventDefault();
+        e.preventDefault(); 
+        setisSubmitting(true)
+        setDisable(true)
         setState((prev) =>({
           ...prev,category: selected
         }))
-        setisSubmitting(true)
         try{ 
 
           if (!imageAsFile) { 
             const storage = ref(storageRef ,`default/def.jpg`);
           let  defaultUrl = await getDownloadURL(storage);
-           alert("hoala")
             setisSubmitting(true)
               const docRef = await addDoc(collection(firedb, "webdiary"), {
                 category: state.category,
@@ -166,8 +163,6 @@ const AddDiaryEntry =() =>{
                 timeStamps: formateDate(),
               });
               
-              console.log (`${docRef.id}`);
-              // dispatch(addEntry(data))
               setisSubmitting(false)
               navigate("/dash");
 
@@ -203,6 +198,7 @@ const AddDiaryEntry =() =>{
             });
             
           }
+          setisSubmitting(false)
 
         }catch(e){
           console.log(e);
@@ -232,12 +228,7 @@ const AddDiaryEntry =() =>{
         <div className="w-full">
         <Header/>
         <div className='new-entry'>
-            {isSubmitting ? (
-                 <div className="relative inset-20  ">
-                  <span className="text-xl font-sans font-semibold">Sending...</span>
-                  <Loader/>
-               </div>
-            ):(
+      
                 <div className="w-12/12 mx-3  h-full">
                  <div className='create-new'>
             <span className='create-text'>Create a new diary</span>
@@ -290,18 +281,23 @@ const AddDiaryEntry =() =>{
                  onChange={handleCheckboxChange} />
             <span className="text-xl font-sans text-gray-900">Check to Publish as Public</span>
           </div>
-          <div  className='facebook-main mx-0 mb-20 '>
-            <button onClick={handleFireBaseUpload}  className=' text-xl text-white'>Save</button>
+          <div  className='facebook-main mx-0 mb-20' >
+            <button className={`text-xl text-white  w-full h-full ${disable && "bg-orange-500"}`} onClick={handleFireBaseUpload} disabled={disable} >Save</button>
             </div>
           </form>
                 </div>
-
-                
-
-            )}
-         
+            
+           
          <Footer/>
             </div>
+            { isSubmitting && <div className=" absolute  xl:w-2/3 w-full  block h-1/4 top-1/2">
+          <div className="float-right justify-center items-end px-20  bg-white border-gray-500 py-10 mr-20 pb-10 shadow-lg  xl:w-1/3  w-1/2 h-1/2  pr-10 xl:pr-0">
+          <div>submmiting...</div>
+         <div className="w-full"> <Loader/></div>
+          </div>
+
+          </div>}
+           
         </div>
       )
 }

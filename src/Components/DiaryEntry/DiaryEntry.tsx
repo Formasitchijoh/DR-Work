@@ -1,4 +1,4 @@
-import React,{useState} from 'react'
+import React,{useEffect, useState} from 'react'
 import logo from '../../resource/logo.png'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { useForm } from 'react-hook-form'
@@ -17,12 +17,14 @@ index: number,
  setActiveEntry: (diaryEntry: DiaryData, index: number) => void
 }
 
-const entry:React.FC<Props> = ({entry,setActiveDiaryEntry,setActiveEntry,index,setisDelete}) => { 
+const DiaryEntry:React.FC<Props> = ({entry,setActiveDiaryEntry,setActiveEntry,index,setisDelete}) => { 
 
   const handleDelete = () =>{
     setActiveEntry(entry,index);
     setisDelete(true)
-  }
+  } 
+
+
 
   return (
     
@@ -55,7 +57,7 @@ const entry:React.FC<Props> = ({entry,setActiveDiaryEntry,setActiveEntry,index,s
     </div>
     </div>
     <div className='Item-body'>
-      <span className='Item-message text-xl italic'>{entry.description}</span>
+      <span className='Item-message text-base italic'>{entry.description}</span>
       
     </div>
    
@@ -64,4 +66,4 @@ const entry:React.FC<Props> = ({entry,setActiveDiaryEntry,setActiveEntry,index,s
   )
 }
 
-export default entry
+export default DiaryEntry

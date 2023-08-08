@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import { BiSearch } from 'react-icons/bi';
 import { CiFilter } from 'react-icons/ci';
 import DiaryData from './types/diaryentry.type';
@@ -31,13 +31,44 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
   const [startDate, setStartDate] = useState<moment.Moment | null>(null);
   const [endDate, setEndDate] = useState<moment.Moment | null>(null);
 
+//context menu states
+const [contextmenuCoordinates, setContextmenuCoordinates] = useState({ x:0,y:0 })
+const [isContextMenuVisible, setIsContextMenuVisible] = useState(false)
+const contextMenuRef = useRef<HTMLDivElement | null>(null);
+ //for closing the context menu and useRef are used to update states that are not displayed to the user
+
+const showContextMenu = (e:any) =>{
+  alert("hoala")
+  e.preventDefault();
+  setisSelect(true)
+  setIsContextMenuVisible(true)
+  setContextmenuCoordinates({x:e.pageX, y:e.pageY})
+   //to get the position that was clicked by the user so that we can display otu context menu there
+}
+
+
+// useEffect(() => {
+//   const handleOutsideClick = (event: any) => {
+//     if (event.target.id !== 'context-opener') {
+//       if (contextMenuRef.current && !contextMenuRef.current.contains(event.target)) {
+//         setIsContextMenuVisible(false);
+//       }
+//     }
+//   };
+
+//   document.addEventListener("click", handleOutsideClick);
+
+//   return () => {
+//     document.removeEventListener("click", handleOutsideClick);
+//   };
+// }, []);
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setdisplayAll(true);
     const results = diaryEntry.filter((entry) => {
       if (e.target.value === '') return entry;
       return entry.description.toLowerCase().includes(e.target.value.toLocaleLowerCase());
     });
-
     setstate({
       query: e.target.value,
       list: results,
@@ -47,14 +78,12 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
   const handleDateSelect = useCallback(() => { 
     setisSelect(true)
     setdisplayAll(true);
-    alert("hoala")
     if (startDate && endDate) {
       const results = diaryEntry.filter((entry) => {
         const selectedStartDate = moment(entry.startDate, 'll');
         return selectedStartDate.isBetween(startDate, endDate, 'day', '[]');
       });
 
-      alert(JSON.stringify(results))
       setisDatedisplay(true);
       setstate({
         query: '',
@@ -82,7 +111,8 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
   // sm:absolute xl:max-w-sm  justify-center items-center pl-5 sm:inset-10 w-3/4 ml-12 h-full bg-gray-100
     const SelectedCategory = () =>{
       return(
-        <div className='fixed flex-col justify-center items-center inset-0 z-50  w-screen h-screen mb-10 mt-5'> 
+        <div className='fixed flex-col justify-center items-center inset-0 z-50  w-screen h-screen mb-10 mt-5 ' 
+        > 
         <div className='bg-black xl:w-1/4 w-3/5 mx-auto  p-10 h-10 flex-col justify-center items-center xl:mr-10 mr-2'><div className='text-2xl text-white  xl:w-1/2  xl:float-right'>Filter</div></div>
         <div className='bg-purple-50 opacity-90 xl:w-1/4 w-3/5 mx-auto  p-10 h-full flex-col justify-center items-center xl:mr-10 mr-2 '>
         {/* <h1 className='text-3xl mb-5 mt-10 w-full font-bold bg-gray-950 h-20 text-white  items-center'>Filter </h1> */}
@@ -97,8 +127,8 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
           <div className='w-full '>
             <DateComponent startDate={startDate} endDate={endDate} setStartDate={setStartDate} setEndDate={setEndDate} moments={moment()}/>
           </div>
-          <div  className='facebook-main w-3/4  mx-0  ml-5 my-10'>
-            <button onClick={handleDateSelect} className=' text-xl text-white justify-center items-center '>filter</button>
+          <div  className='facebook-main w-3/4  mx-0  ml-5 my-10' onClick={handleDateSelect}>
+            <button  className=' text-xl text-white justify-center items-center '>filter</button>
             </div>
         </div>
         </div>

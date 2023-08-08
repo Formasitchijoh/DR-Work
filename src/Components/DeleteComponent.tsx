@@ -21,7 +21,6 @@ const DeleteComponent:React.FC<props> = ({setisDelete}) => {
        console.log(`i am in switzerland loging out the entry to be deleted and i s${JSON.stringify(currententry)}`);
        
         const dispatch = useAppDispatch()
-        const navigate = useNavigate()
 
       const handleDelete = async () => {
       
@@ -39,7 +38,7 @@ const DeleteComponent:React.FC<props> = ({setisDelete}) => {
             dispatch(resetEntry());
             setisDelete(false)
             }
-            // navigate("/dash")
+            setisDelete(false)
           } catch (error) {
             console.error("Error deleting diary entry:", error);
           }

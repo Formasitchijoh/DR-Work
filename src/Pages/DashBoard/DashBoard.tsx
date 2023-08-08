@@ -1,4 +1,4 @@
-import React, {  ChangeEvent, useEffect, useState } from "react";
+import React, {  ChangeEvent, useCallback, useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from '../../hooks/storeHook'
 import Header from '../../Components/Header/Header-Component'
 import { Link } from "react-router-dom";
@@ -100,9 +100,10 @@ const [test, settest] = useState(false)
 //useEffct Hooks
 
 //Fetch all user data from firestore using the query language
-useEffect(() =>{
-  const fetchAllEntries = async () => {  
-   
+useEffect(() =>{ 
+
+    const fetchAllEntries = async () => {   
+      setLoading(true)
     try {  
       const diaryRef = collection(firedb, "webdiary");
     let  query_ = query(diaryRef, orderBy("timeStamps", "desc" as OrderByDirection));
@@ -129,13 +130,17 @@ useEffect(() =>{
       });
       
       setState((prevState) => ({ ...prevState, diaryEntry: entries })); //assign the state the newly fetch entries
-      dispatch(addEntry(entries));    //dispatch the newly fetch entries to firestore
+      dispatch(addEntry(entries));  
+      setLoading(false)
+        //dispatch the newly fetch entries to firestore
     } catch (error) {
       console.error(error);
     }
   };
-
-  fetchAllEntries();
+  setTimeout(() => {
+    fetchAllEntries()
+  },100)
+// setLoading(false)
 
 },[fireauth.currentUser?.uid])
 
@@ -169,7 +174,6 @@ useEffect(()=>{
 },[diaryEntry,dispatch])
 
 
-// #########################################################
 
   const SelectCategory = () => {
     return (
@@ -204,68 +208,6 @@ useEffect(()=>{
       }
 
     };
-
-  //   const uploadEntries = async () => {
-  //     setisSubmiting(true)
-  //    try {
-  //      const imageRef = ref(storageRef, `images/${imageAsFile?.name}`);
-  //      if (!imageAsFile) {
-  //        return;
-  //      }
-   
-  //      const snapshot = await uploadBytesResumable(imageRef, imageAsFile);
-  //      const downloadURL = await getDownloadURL(snapshot.ref);
-   
-  //      const docRef = currententry?.key
-  //        ? doc(firedb, 'webdiary', currententry.key)
-  //        : undefined;
-   
-  //      if (!docRef) {
-  //        return;
-  //      }
-   
-  //      const docSnap = await getDoc(docRef);
-  //      if (!docSnap.exists()) {
-  //        throw new Error('Document does not exist!');
-  //      }
-   
-  //      const entries = {
-  //        key: diaryEntry.key,
-  //        category: selected,
-  //        description: diaryEntry.description,
-  //        image: downloadURL,
-  //        startDate: curstartDate?.format("ll"),
-  //        endDate: curendDate?.format("ll"),
-  //        firebaseUser: fireauth.currentUser?.uid,
-  //        status: !diaryEntry.status,
-  //        timeStamps: formateDate(),
-
-  //      };
-   
-  //      await updateDiaryEntry(docRef, entries);
-   
-  //      const newEntries = {
-  //        currententry: entries as unknown as DiaryData,
-  //        curIndex: curIndex,
-  //        updateStatus: updateStatus,
-  //      };
-   
-  //      setcurState((prevState) => ({
-  //        currentDiaryEntry: {
-  //          ...prevState.currentDiaryEntry,
-  //          status: !diaryEntry.status,
-  //        },
-  //        message: prevState.message,
-  //      }));
-   
-  //      dispatch(selectedEntry(newEntries));
-  //      setisSubmiting(false)
-  //      navigate('/dash');
-  //    } catch (error) {
-  //      console.error('Error updating document: ', error);
-  //    }
-  //  };
-   
     
 
     const updateDiaryEntry = async (docRef:any, entries:any) => {
@@ -282,8 +224,8 @@ useEffect(()=>{
           }));
         }
 
-        const updateEntry = (diaryEntry: DiaryData) =>{
-       // Get a reference to the document you want to update
+        const updateEntry = useCallback((diaryEntry: DiaryData) =>{
+           // Get a reference to the document you want to update
            const docRef = diaryEntry?.key ? doc(firedb, 'webdiary', diaryEntry.key) : undefined;
             if(docRef){
               getDoc(docRef)
@@ -291,24 +233,25 @@ useEffect(()=>{
               if (docSnap.exists()) {
                 const entries = {
                   key: diaryEntry.key,
-                  category: diaryEntry.category ,
-                  description: diaryEntry.description ,
-                  image: diaryEntry.image ,
-                  startDate: diaryEntry.startDate ,
-                  endDate: diaryEntry.endDate ,
-                  status: !diaryEntry.status ,
+                  category: diaryEntry.category,
+                  description: diaryEntry.description,
+                  image: diaryEntry.image,
+                  startDate: diaryEntry.startDate,
+                  endDate: diaryEntry.endDate,
+                  status: !diaryEntry.status,
+                  firebaseUser: fireauth.currentUser?.uid,
+                  timeStamps: formateDate()
                 } 
-                alert(JSON.stringify(`previous status ${diaryEntry.status} and the current ${entries.status}`))
                 updateDoc(docRef, {...entries})
                 .then(()=>{
-                  const newEntries = {
-                  currententry:entries as DiaryData,
-                  curIndex:curIndex,
-                  updateStatus:updateStatus
-                  
-                }
-                dispatch(selectedEntry(newEntries))
-                alert(`${JSON.stringify(newEntries)} and new`)
+                dispatch(selectedEntry(
+                  {
+                    currententry:entries,
+                    curIndex:curIndex,
+                    updateStatus:updateStatus
+                  }
+                ))
+                alert("done")
                 setcurState((prevState) => ({
                   currentDiaryEntry: {
                   ...prevState.currentDiaryEntry,
@@ -334,16 +277,17 @@ useEffect(()=>{
 
             else {
               console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");  
-            }}
+            }
+
+        },[curIndex, dispatch, updateStatus]) 
 
             const setActiveDiaryEntry = (diaryEntry: DiaryData, index: number) => { 
               setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
-              alert(`the current entry is ${JSON.stringify(diaryentry[index])} and the index is ${index}`)
-          //  dispatch(selectedEntry({
-          //       currententry: diaryEntry,
-          //       curIndex: index,
-          //       updateStatus: true
-          //     }));
+           dispatch(selectedEntry({
+                currententry: diaryEntry,
+                curIndex: index,
+                updateStatus: true
+              }));
 
               updateEntry(diaryEntry)
               // navigate("/entry") 
@@ -351,7 +295,6 @@ useEffect(()=>{
 
             const setActiveEntry = (diaryEntry: DiaryData, index: number) => { 
               setState(prevState => ({...prevState, currentEntry: diaryEntry, currentIndex: index}));
-              alert(`the current entry is ${JSON.stringify(diaryentry[index])} and the index is ${index}`)
            dispatch(selectedEntry({
                 currententry: diaryEntry,
                 curIndex: index,
@@ -362,7 +305,6 @@ useEffect(()=>{
             };
 
         const { currentDiaryEntry } = curstate;
-        console.log (`this is the lost ${JSON.stringify(currententry)}`)
 
 
     return (
@@ -385,9 +327,15 @@ useEffect(()=>{
          <div className="w-full py-5 ">
          <SearchFilter diaryEntry={diaryentry} setdisplayAll={setisDisplay} setActiveDiaryEntry={setActiveDiaryEntry} setActiveEntry={setActiveEntry} index={curIndex} setisDelete={setisDelete}/>
          </div>
-         {loading && <Loader/>}
-              <ul className=" xl:grid xl:grid-cols-2 " >
-                    {  !isdisplay? (diaryentry.map((entry,index)=>(
+         {loading && <div className="w-1/2 block h-20 mb-10">
+          <div className="float-right justify-center items-end px-20 py-5 bg-purple-50 border-gray-200   w-1/3 h-20 shadow-md">
+          <div>Loading...</div>
+         <div> <Loader/></div>
+          </div>
+
+          </div>}
+              <ul className=" xl:grid xl:grid-cols-2 xl:ml-20 " >
+                    {  !isdisplay  ? (diaryentry.map((entry,index)=>(
                                 <li
                                     key={entry.key} className={ "font-sans " + (index === curIndex ? "active" : "")}
                                    >

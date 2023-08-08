@@ -71,7 +71,7 @@ const signInWithGoogle = async ()=>{
                 <p className='welcome-msg'>Create a private entries, log your activities, update records and publish what you want to the public to see </p>
                 </div>
         </div>
-        <div className='signIn-btn '>
+        <div className='signIn-btn mb-5 '>
             <div className='getting-started'>
             <Link to='/dash'>  <p className='getting-started-txt'>GET STARTED</p> <hr className='getting-hr'/>  </Link>             
              </div>
