@@ -6,6 +6,7 @@ import Cookies from 'js-cookie'
 import { fireauth } from '../../firebase'
 import { login,logout } from '../Slices/authSlice'
 import { useNavigate } from 'react-router-dom'
+import { signOut } from 'firebase/auth'
 
 
 export  const LoginHeader = () =>{
@@ -48,8 +49,8 @@ const Header = () => {
     }, [dispatch]);
     
     const  handleSignOut = async () =>{
-        try{
-            await fireauth.signOut();
+        try{ 
+          signOut(fireauth)
             dispatch(logout());
             setisSignOut(true)
             navigate("/")

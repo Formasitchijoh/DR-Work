@@ -10,9 +10,8 @@ const Home = () => {
 
   return (
     
-    <div className="bg-purple-50">
+    <div className="">
      <Login/>
-     
     </div>
   
   );

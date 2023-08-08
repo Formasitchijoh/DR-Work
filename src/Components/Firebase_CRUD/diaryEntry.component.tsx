@@ -197,7 +197,6 @@ const [enable, setEnable] = useState(false)
                   message: prevState.message,
                 }));
                 dispatch(selectedEntry(newEntries))
-                  alert(state.currentDiaryEntry.status)
                   navigate("/dash")
 
                 } else {
