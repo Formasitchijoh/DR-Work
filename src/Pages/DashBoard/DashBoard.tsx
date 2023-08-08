@@ -78,8 +78,8 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
 //states for timestamp
 const [curstartDate,setcurStartDate] = useState<moment.Moment | null>(null);
 const [curendDate,setcurEndDate] = useState<moment.Moment | null>(null);
-const [isSubmiting, setisSubmiting] = useState(false)
-const [enable, setEnable] = useState(false) 
+const [isUpdate, setIsUpdate] = useState(false)
+
 const [curstate, setcurState] = useState({
   currentDiaryEntry: {
     key: currententry?.key || null,
@@ -339,7 +339,7 @@ useEffect(()=>{
                                 <li
                                     key={entry.key} className={ "font-sans " + (index === curIndex ? "active" : "")}
                                    >
-                                  <DiaryEntry entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry} />
+                                  <DiaryEntry entry={entry} setIsUpdate={setIsUpdate} isUpdate={isUpdate} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry} />
 
                               </li>
                           ))): null

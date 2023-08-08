@@ -30,6 +30,7 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
 
   const [startDate, setStartDate] = useState<moment.Moment | null>(null);
   const [endDate, setEndDate] = useState<moment.Moment | null>(null);
+  const [isUpdate, setIsUpdate] = useState(false)
 
 //context menu states
 const [contextmenuCoordinates, setContextmenuCoordinates] = useState({ x:0,y:0 })
@@ -161,7 +162,7 @@ const showContextMenu = (e:any) =>{
             {
                 (state.query === 'No posts match the query' ? "":state.list.map(entry=>{
                     return <li key={entry.key}>
-                      <DiaryEntry entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry}/>
+                      <DiaryEntry setIsUpdate={setIsUpdate}  isUpdate={isUpdate} entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry}/>
                     </li>
                 }))
             }
