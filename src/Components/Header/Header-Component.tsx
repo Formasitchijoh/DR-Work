@@ -11,10 +11,10 @@ import { signOut } from 'firebase/auth'
 
 export  const LoginHeader = () =>{
   return(
-    <div className="header xl:justify-start  ">
+    <div className="header h-20 xl:justify-start  ">
         <div className='logo flex justify-center items-center  w-3/4 xl:w-1/4 xl:ml-20'>
-           <img  src={logo} alt='web diary' className=' w-1/4 xl:w-20  h-full'/>
-          <p className=' text-sm  xl:text-2xl block float-none from-neutral-900 text-white'>Private Journal</p>
+           <img  src={logo} alt='web diary' className=' w-1/2 xl:w-20  h-full'/>
+          <p className=' text-lg w-3/4 xl:text-2xl block float-none from-neutral-900 text-white'>Private Journal</p>
         </div>
        
     </div>
@@ -76,17 +76,17 @@ const Header = () => {
 
   return (
    <>
-   <div className="header">
-            <div className='logo'>
-                <img  src={logo} alt='web diary' className='logo-img'/>
+   <div className="header h-10 xl:h-20">
+            <div className='logo block justify-center w-20 items-center ml-2'>
+                <img  src={logo} alt='web diary' className='logo-img  w-full '/>
             </div>
-            <div className='heading'>
-            <p className='header-text'>Private Journal</p>
+            <div className='heading  w-1/2'>
+            <p className='header-text text-sm xl:text-2xl mt-2 '>Private Journal</p>
             </div>
 
             {
-                !isSignOut ? ( <div className='micro ' onClick={ () =>setisSignOut(true)}>
-                <img src={ user?.photoUrl  ?  user?.photoUrl : user?.email?.charAt(0).toUpperCase() }alt='web diary' className='micro rounded-full'/>
+                !isSignOut ? ( <div className='micro mr-2 ' onClick={ () =>setisSignOut(true)}>
+                <img src={ user?.photoUrl  ?  user?.photoUrl : user?.email?.charAt(0).toUpperCase() }alt='web diary' className='micro rounded-full h-6 mt-1 w-10'/>
             </div>) : <SignOutMenu/>
             }
             

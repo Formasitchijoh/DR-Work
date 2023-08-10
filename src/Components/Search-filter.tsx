@@ -30,6 +30,7 @@ const SearchFilter: React.FC<Props> = ({ diaryEntry, setdisplayAll,setActiveDiar
 
   const [startDate, setStartDate] = useState<moment.Moment | null>(null);
   const [endDate, setEndDate] = useState<moment.Moment | null>(null);
+  const [isUpdate, setIsUpdate] = useState(false)
 
 //context menu states
 const [contextmenuCoordinates, setContextmenuCoordinates] = useState({ x:0,y:0 })
@@ -111,10 +112,9 @@ const showContextMenu = (e:any) =>{
   // sm:absolute xl:max-w-sm  justify-center items-center pl-5 sm:inset-10 w-3/4 ml-12 h-full bg-gray-100
     const SelectedCategory = () =>{
       return(
-        <div className='fixed flex-col justify-center items-center inset-0 z-50  w-screen h-screen mb-10 mt-5 ' 
-        > 
-        <div className='bg-black xl:w-1/4 w-3/5 mx-auto  p-10 h-10 flex-col justify-center items-center xl:mr-10 mr-2'><div className='text-2xl text-white  xl:w-1/2  xl:float-right'>Filter</div></div>
-        <div className='bg-purple-50 opacity-90 xl:w-1/4 w-3/5 mx-auto  p-10 h-full flex-col justify-center items-center xl:mr-10 mr-2 '>
+        <div className='fixed flex-col justify-center items-center inset-0 z-50  w-screen h-screen mb-10 mt-5'> 
+        <div className='bg-black xl:w-1/4 w-4/5 mx-auto  p-10 h-10 flex-col justify-center items-center xl:mr-10 mr-2'><div className='text-2xl text-white  xl:w-1/2  xl:float-right'>Filter</div></div>
+        <div className='bg-purple-50 opacity-90 xl:w-1/4 w-4/5 mx-auto  p-10 h-full flex-col justify-center items-center xl:mr-10 mr-2 '>
         {/* <h1 className='text-3xl mb-5 mt-10 w-full font-bold bg-gray-950 h-20 text-white  items-center'>Filter </h1> */}
        
         < div className=''> 
@@ -161,7 +161,7 @@ const showContextMenu = (e:any) =>{
             {
                 (state.query === 'No posts match the query' ? "":state.list.map(entry=>{
                     return <li key={entry.key}>
-                      <DiaryEntry entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry}/>
+                      <DiaryEntry setIsUpdate={setIsUpdate}  isUpdate={isUpdate} entry={entry} setActiveDiaryEntry={setActiveDiaryEntry} index={index} setisDelete={setisDelete} setActiveEntry={setActiveEntry}/>
                     </li>
                 }))
             }

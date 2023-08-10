@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import DiaryData from "../types/diaryentry.type";
+import { title } from "process";
 
 //interface and types define how the element will look like in this case the element of this type will be a single entry of type DiaryData Array
 //every element of this type has to define just a single element diaryEntry of type DiaryData[]
@@ -21,9 +22,18 @@ export const diaryEntrySlice = createSlice({
         addEntry : (state, action: PayloadAction<DiaryData[]>) =>{
                 state.diaryentry = action.payload;                
         },
+        updatentry:(state,action) =>{
+          const { key, status } = action.payload
+          const existingentry = state.diaryentry.find(entry => entry.key === key)
+          if(existingentry){
+            existingentry.status = status
+          }
+
+          alert(`the status is currently ${status}`)
+        }
         
     },
 });
 
-export const { addEntry } = diaryEntrySlice.actions;
+export const { addEntry,updatentry } = diaryEntrySlice.actions;
 export default diaryEntrySlice.reducer;

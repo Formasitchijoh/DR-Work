@@ -1,8 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,700;1,500&display=swap');
+
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 
+body{
+    font-family: 'Poppins', sans-serif;
+}
 @layer components {
     .main {
         @apply  xl:max-w-screen-xl max-w-sm xl:w-[100vw] m-auto  min-h-[100vh] flex-col justify-center items-center border-2 border-gray-100 px-0 rounded-lg
@@ -50,7 +57,7 @@
     @apply text-lg font-semibold text-gray-700
 }
 .getting-hr{
-    @apply w-full h-0.5  bg-gray-500 font-sans
+    @apply w-full h-0.5 bg-gray-500 font-sans
 }
 
 .facebook-main{
@@ -87,7 +94,7 @@
 }
 /* Styling the diary Item  */
 .Item-card{
-    @apply   rounded-sm w-11/12 h-1/2  mb-5  ml-4 bg-gray-50  xl:w-3/4 xl:h-[20vh]
+    @apply   rounded-sm w-11/12  mb-5  ml-4 bg-gray-50  xl:w-3/4 xl:h-[20vh]
 }
 .Item-header{
     @apply w-full flex justify-start gap-5 px-2 items-center m-auto 

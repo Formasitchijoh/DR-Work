@@ -10,12 +10,14 @@ import Footer from '../../Components/Footer/Footer'
 import Cookies from 'js-cookie'
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
 import { LoginHeader } from '../../Components/Header/Header-Component'
+import Toast from '../../Components/Toast/Toast'
 const Login = () => {
 
     const {user} = useAppSelector((state)=>state.auth)
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const [userName, setUserName] = useState<string>('initialname');
+    const [loginSuccess, setLoginSuccess] = useState(false)
 
 
     useEffect(()=>{
@@ -53,8 +55,9 @@ const signInWithGoogle = async ()=>{
               setUserName(user.displayName);
             }
       }
-     
+      setLoginSuccess(true)
       navigate("/dash")  
+
       
   }catch(error){
       console.log(`Error Signing in ${error}`);}}
@@ -63,6 +66,10 @@ const signInWithGoogle = async ()=>{
   return ( 
     <div className='xl:w-2xl'>
         <LoginHeader/>
+
+        {
+          loginSuccess && <Toast position="top-left"/>
+        }
       <div className='p-10 my-20 pb-10 shadow-2xl  max-w-lg  m-auto mt-10  h-[80vh] flex-col justify-center items-center border-4 border-gray-200 bg-white px-0 rounded-lg'>
         <div className='h-[50vh]'>
         <div className='welcome-main'>
