@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import DiaryData from "../../Components/types/diaryentry.type";
 import DiaryEntry from "../../Components/DiaryEntry/DiaryEntry";
 import SearchFilter from "../../Components/Search-filter";
-import { addEntry } from "../../Components/Slices/diaryItemSlice";
+import { addEntry ,updatentry} from "../../Components/Slices/diaryItemSlice";
 import { selectedEntry } from "../../Components/Slices/currentEntrySlice";
 import DiaryEntryComponent from "../../Components/Firebase_CRUD/diaryEntry.component";
 import moment from 'moment'
@@ -18,6 +18,8 @@ import { CustomSelect } from "../../Components/SelectDropDown";
 import formateDate from "../../Components/timeStamp";
 import DeleteComponent from "../../Components/DeleteComponent";
 import { ref } from "yup";
+import { ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 type State = {
   diaryEntry: Array<DiaryData>,
   currentEntry: DiaryData | null,
@@ -79,6 +81,7 @@ const [displayImage, setdisplayImage] = useState<string | undefined>(undefined)
 const [curstartDate,setcurStartDate] = useState<moment.Moment | null>(null);
 const [curendDate,setcurEndDate] = useState<moment.Moment | null>(null);
 const [isUpdate, setIsUpdate] = useState(false)
+const [showToast, setShowToast] = useState(true);
 
 const [curstate, setcurState] = useState({
   currentDiaryEntry: {
@@ -100,43 +103,43 @@ const [test, settest] = useState(false)
 //useEffct Hooks
 
 //Fetch all user data from firestore using the query language
+const fetchAllEntries = async () => {   
+  setLoading(true)
+try {  
+  const diaryRef = collection(firedb, "webdiary");
+let  query_ = query(diaryRef, orderBy("timeStamps", "desc" as OrderByDirection));
+
+query_ = query(diaryRef, or(where("firebaseUser", "==", fireauth.currentUser?.uid), where("status", "==", true)));
+  const querySnapshot = await getDocs(query_);
+
+  
+  const entries: DiaryData[] = [];
+        setShowToast(false)
+  querySnapshot.forEach((doc) => {
+    const data = doc.data();
+    entries.push({
+      key: doc.id,
+      category: data.category,
+      description: data.description,
+      image: data.image,
+      status: data.status,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      firebaseUser: data.firebaseUser,
+      timeStamps: data.timeStamps,
+    } as DiaryData);
+  });
+  
+  setState((prevState) => ({ ...prevState, diaryEntry: entries })); //assign the state the newly fetch entries
+  dispatch(addEntry(entries));  
+  setLoading(false)
+    //dispatch the newly fetch entries to firestore
+} catch (error) {
+  console.error(error);
+}
+};
+
 useEffect(() =>{ 
-
-    const fetchAllEntries = async () => {   
-      setLoading(true)
-    try {  
-      const diaryRef = collection(firedb, "webdiary");
-    let  query_ = query(diaryRef, orderBy("timeStamps", "desc" as OrderByDirection));
-
-    query_ = query(diaryRef, or(where("firebaseUser", "==", fireauth.currentUser?.uid), where("status", "==", true)));
-      const querySnapshot = await getDocs(query_);
-  
-      
-      const entries: DiaryData[] = [];
-  
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        entries.push({
-          key: doc.id,
-          category: data.category,
-          description: data.description,
-          image: data.image,
-          status: data.status,
-          startDate: data.startDate,
-          endDate: data.endDate,
-          firebaseUser: data.firebaseUser,
-          timeStamps: data.timeStamps,
-        } as DiaryData);
-      });
-      
-      setState((prevState) => ({ ...prevState, diaryEntry: entries })); //assign the state the newly fetch entries
-      dispatch(addEntry(entries));  
-      setLoading(false)
-        //dispatch the newly fetch entries to firestore
-    } catch (error) {
-      console.error(error);
-    }
-  };
   setTimeout(() => {
     fetchAllEntries()
   },100)
@@ -230,7 +233,9 @@ useEffect(()=>{
             if(docRef){
               getDoc(docRef)
             .then((docSnap) => {
-              if (docSnap.exists()) {
+              if (docSnap.exists()) { 
+                const status = !diaryEntry.status
+                const key = diaryEntry.key
                 const entries = {
                   key: diaryEntry.key,
                   category: diaryEntry.category,
@@ -251,7 +256,8 @@ useEffect(()=>{
                     updateStatus:updateStatus
                   }
                 ))
-                alert("done")
+                dispatch(updatentry({status,key}))
+                toast.success("successfully updated")
                 setcurState((prevState) => ({
                   currentDiaryEntry: {
                   ...prevState.currentDiaryEntry,
@@ -310,7 +316,7 @@ useEffect(()=>{
     return (
       <>
       <Header/>
-      <>
+      <div>
       <div className="w-full xl:w-10/12 my-8 mx-2 flex justify-evenly   items-center">
           <div className="w-1/2 xl:w-1/4 ">
             <span className="font-sans xl:hidden  xl:text-3xl text-2xl text-gray-900 font-bold">Welcome Back</span>
@@ -321,19 +327,20 @@ useEffect(()=>{
          </Link>
           </div>
          </div>
-      </>
+     
       <div className="main xl:pt-5">
         
          <div className="w-full py-5 ">
          <SearchFilter diaryEntry={diaryentry} setdisplayAll={setisDisplay} setActiveDiaryEntry={setActiveDiaryEntry} setActiveEntry={setActiveEntry} index={curIndex} setisDelete={setisDelete}/>
          </div>
-         {loading && <div className="w-1/2 block h-20 mb-10">
+         
+         {/* {loading && <div className=" xl:w-1/2 w-3/4 block h-20 mb-10">
           <div className="float-right justify-center items-end px-20 py-5 bg-purple-50 border-gray-200   w-1/3 h-20 shadow-md">
           <div>Loading...</div>
          <div> <Loader/></div>
           </div>
 
-          </div>}
+          </div>} */}
               <ul className=" xl:grid xl:grid-cols-2 xl:ml-20 " >
                     {  !isdisplay  ? (diaryentry.map((entry,index)=>(
                                 <li
@@ -351,11 +358,21 @@ useEffect(()=>{
           isDelete && <DeleteComponent setisDelete={setisDelete}/>
          }
          
-        
+         {
+          loading && (
+            <div className=" flex xl:w-1/2 w-full z-50 mx-auto absolute  h-[50vh]  justify-center  items-center ">
+         <div className="  xl:ml-10 p-10 bg-purple-50 border-gray-500  shadow-md ">
+         <span>Loading...</span>
+           <Loader/>
+           </div>
+          </div>
+          )
+         }
          {/* { isLoggedIn && <LoginSuccess />} */}
       </div>
       
-       
+      <ToastContainer  />
+    </div>
 
       </>
       
